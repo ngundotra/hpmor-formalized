@@ -92,29 +92,39 @@ def TimeLoop.periodicConsistent {S : Type*} (tl : TimeLoop S) (s : S) (k : ℕ) 
     revisit some state within `|S|` steps. The first revisited state lies
     on a periodic orbit. -/
 theorem novikov_periodic_consistency
-    (S : Type*) [Fintype S] [Nonempty S] [DecidableEq S]
+    (S : Type*) [Finite S] [Nonempty S]
     (tl : TimeLoop S) :
     ∃ s : S, ∃ k : ℕ, tl.periodicConsistent s k := by
+  classical
+  have := Fintype.ofFinite S
   have h_pigeonhole : ∀ (s : S), ∃ i j : ℕ, i < j ∧ tl.transition^[i] s = tl.transition^[j] s := by
     intros s
     by_contra h_no_repeat;
-    exact absurd ( Set.infinite_range_of_injective ( fun i j hij => le_antisymm ( not_lt.1 fun hi => h_no_repeat ⟨ j, i, hi, hij.symm ⟩ ) ( not_lt.1 fun hj => h_no_repeat ⟨ i, j, hj, hij ⟩ ) ) ) ( Set.not_infinite.mpr <| Set.toFinite _ );
-  cases' h_pigeonhole ( Classical.arbitrary S ) with i hi;
-  cases' hi with j hj;
-  refine' ⟨ tl.transition^[i] ( Classical.arbitrary S ), j - i, Nat.sub_pos_of_lt hj.1, _ ⟩;
-  rw [ ← Function.iterate_add_apply, Nat.sub_add_cancel hj.1.le, hj.2 ]
+    exact absurd ( Set.infinite_range_of_injective ( fun i j hij => le_antisymm
+      ( not_lt.1 fun hi => h_no_repeat ⟨ j, i, hi, hij.symm ⟩ )
+      ( not_lt.1 fun hj => h_no_repeat ⟨ i, j, hj, hij ⟩ ) ) )
+      ( Set.not_infinite.mpr <| Set.toFinite _ );
+  obtain ⟨ i, j, hj ⟩ := h_pigeonhole ( Classical.arbitrary S )
+  exact ⟨ tl.transition^[i] ( Classical.arbitrary S ), j - i, Nat.sub_pos_of_lt hj.1,
+    by rw [ ← Function.iterate_add_apply, Nat.sub_add_cancel hj.1.le, hj.2 ] ⟩
 
 /-- Helper: In a finite type, iterating any function produces a repeated value. -/
 lemma exists_iterate_eq_of_finite
-    (S : Type*) [Fintype S] [DecidableEq S]
+    (S : Type*) [Fintype S]
     (f : S → S) (s : S) :
     ∃ i j : ℕ, i < j ∧ j ≤ Fintype.card S ∧ f^[i] s = f^[j] s := by
+  classical
   by_contra! h_contra;
-  exact absurd ( Finset.card_le_univ ( Finset.image ( fun i => f^[i] s ) ( Finset.Iic ( Fintype.card S ) ) ) ) ( by rw [ Finset.card_image_of_injOn fun i hi j hj hij => le_antisymm ( not_lt.1 fun hi' => h_contra _ _ hi' ( by aesop ) hij.symm ) ( not_lt.1 fun hj' => h_contra _ _ hj' ( by aesop ) hij ) ] ; simp +decide )
+  exact absurd ( Finset.card_le_univ ( Finset.image ( fun i => f^[i] s )
+    ( Finset.Iic ( Fintype.card S ) ) ) ) ( by
+    rw [ Finset.card_image_of_injOn fun i hi j hj hij => le_antisymm
+      ( not_lt.1 fun hi' => h_contra _ _ hi' ( by aesop ) hij.symm )
+      ( not_lt.1 fun hj' => h_contra _ _ hj' ( by aesop ) hij ) ]
+    simp +decide )
 
 /-- Helper: From a repeated iterate, extract a periodic point. -/
 lemma periodic_point_of_iterate_eq
-    (S : Type*) [DecidableEq S]
+    (S : Type*)
     (f : S → S) (s : S) (i j : ℕ) (hij : i < j) (heq : f^[i] s = f^[j] s) :
     f^[j - i] (f^[i] s) = f^[i] s := by
   rw [ ← Function.iterate_add_apply, Nat.sub_add_cancel hij.le, heq ]
@@ -125,7 +135,7 @@ lemma periodic_point_of_iterate_eq
     then a true fixed point exists. This models "stable" time loops where
     the universe settles into a steady state. -/
 theorem novikov_fixed_point_of_idempotent
-    (S : Type*) [Fintype S] [Nonempty S] [DecidableEq S]
+    (S : Type*) [Nonempty S]
     (tl : TimeLoop S)
     (h : tl.transition ∘ tl.transition = tl.transition) :
     ∃ s : S, tl.selfConsistent s := by
@@ -136,13 +146,13 @@ theorem novikov_fixed_point_of_idempotent
     function (all states collapse to one), then that final state is a
     fixed point — the unique self-consistent history. -/
 theorem novikov_fixed_point_of_constant_composition
-    (S : Type*) [Fintype S] [Nonempty S] [DecidableEq S]
-    (tl : TimeLoop S) (n : ℕ) (hn : n > 0)
+    (S : Type*) [Nonempty S]
+    (tl : TimeLoop S) (n : ℕ) (_hn : n > 0)
     (c : S) (hc : ∀ s : S, tl.transition^[n] s = c) :
     tl.selfConsistent c := by
-  simp [TimeLoop.selfConsistent];
-  convert hc ( tl.transition c ) using 1;
-  erw [ Function.iterate_succ_apply' ];
+  simp only [TimeLoop.selfConsistent]
+  convert hc ( tl.transition c ) using 1
+  erw [ Function.iterate_succ_apply' ]
   rw [ hc ]
 
 -- ============================================================================
@@ -197,15 +207,15 @@ structure ConsistentHistory (n : ℕ) (S : Type*) (dag : CausalDAG n) where
     the evolution function. This demonstrates that acyclic causal structures
     always admit paradox-free histories. -/
 theorem consistent_assignment_exists
-    (n : ℕ) (hn : n > 0) (S : Type*) [Nonempty S]
+    (n : ℕ) (_hn : n > 0) (S : Type*) [Nonempty S]
     (f : S → S) :
     let dag : CausalDAG n := ⟨fun i j => j.val = i.val + 1, fun i j h => by omega⟩
     ∃ ch : ConsistentHistory n S dag,
       ch.evolve = f := by
-  fconstructor;
-  use fun i => Nat.recOn i ( Classical.arbitrary S ) fun i hi => f hi, f;
-  all_goals norm_num;
-  aesop
+  fconstructor
+  · exact ⟨fun i => Nat.recOn i ( Classical.arbitrary S ) fun i hi => f hi, f,
+      fun i j h => by aesop⟩
+  · norm_num
 
 -- ============================================================================
 -- PART 3: Connecting the Models — Time-Turner Sequences
@@ -238,7 +248,7 @@ noncomputable def TimeTurnerSequence.toTimeLoop {S : Type*} {k : ℕ}
     exists a state that periodically returns to itself under the composed
     transition. -/
 theorem time_turner_consistency
-    (S : Type*) [Fintype S] [Nonempty S] [DecidableEq S]
+    (S : Type*) [Finite S] [Nonempty S]
     {k : ℕ} (seq : TimeTurnerSequence S k) :
     ∃ s : S, ∃ p : ℕ, p > 0 ∧ seq.fullLoop^[p] s = s := by
   convert novikov_periodic_consistency S _

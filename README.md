@@ -1,74 +1,94 @@
 # hpmor-formalized
 
-Formalizing the mathematical and logical claims of [Harry Potter and the Methods of Rationality](https://hpmor.com) in Lean 4 with Mathlib.
+Or: what happens when Harry James Potter-Evans-Verres acquires a proof assistant and decides that "because it would be embarrassing to be wrong" should scale all the way up to metaphysics.
 
-## What is this?
+This project formalizes pieces of [Harry Potter and the Methods of Rationality](https://hpmor.com) in Lean 4. The premise is simple:
 
-HPMOR by Eliezer Yudkowsky is dense with real mathematical reasoning: Bayesian epistemology, game theory, decision theory, and the physics of time travel. This project takes those claims and turns them into machine-verified proofs.
+> If a claim is important enough to base a plan on, it is important enough to try proving.
 
-We're using **autoformalization agents** to accelerate the work:
-- [Harmonic's Aristotle](https://www.harmonic.fun/) -- autoformalization from natural language to Lean
-- [Axiom's AXLE](https://axiom.dev/) -- automated proof search and formalization
-- Potentially [Math Inc's Gauss](https://www.mathinc.ai/) -- LLM-guided theorem proving
+So we take bits of HPMOR that sound like they ought to survive contact with mathematics, and we ask Lean to be the stern voice of reality.
 
-## Modules
+## What Is In Here?
 
-| Module | HPMOR Chapters | What it formalizes | Status |
-|--------|---------------|--------------------|--------|
-| [`TimeTravel.Novikov`](HpmorFormalized/TimeTravel/Novikov.lean) | 11-17, 61-63 | Novikov self-consistency principle: any finite time-loop has a paradox-free fixed point | Fully proven |
-| [`TimeTravel.Paradox`](HpmorFormalized/TimeTravel/Paradox.lean) | 11-17, 61-63 | Grandfather paradox modeled as fixed-point problem; universe override as resolution | Fully proven |
-| [`Bayes.Basic`](HpmorFormalized/Bayes/Basic.lean) | 2-3 | Bayesian posterior update; posterior -> 1 as evidence strength -> infinity | Definitions + key properties proven; limit `sorry`'d |
-| [`DecisionTheory.Basic`](HpmorFormalized/DecisionTheory/Basic.lean) | 33, 54-56, 75-77 | Prisoner's dilemma, dominant strategy defection, precommitment | Stubbed |
-| [`GameTheory.Basic`](HpmorFormalized/GameTheory/Basic.lean) | 22-24, 33, 47, 113-122 | Nash equilibrium, bargaining, Pareto improvements | Stubbed |
+At the moment, the project is a small library of formal experiments inspired by Harry's favorite habits:
 
-### Flagship: Novikov Self-Consistency
+- Updating on evidence instead of clinging to priors.
+- Treating game theory as something more than a conversational prop.
+- Refusing to accept time travel unless it can be made to behave itself.
+- Looking at a dramatic claim and asking, "Fine. What are the axioms?"
 
-The Time-Turner in HPMOR obeys strict rules -- you can't create paradoxes. We prove this must be the case: any deterministic state machine over a finite state space iterated through a closed timelike curve **must** have a periodic orbit (pigeonhole principle). We also model causal structure as DAGs and prove paradox-freedom properties.
+Some modules are serious proofs. Some are scaffolding for future work. All of them are trying, in one way or another, to cash out rationality in the unforgiving currency of type theory.
 
-**This may be the first-ever Lean 4 formalization of Novikov's self-consistency principle.**
+## Current Adventures
 
-### Bayesian Reasoning (Ch. 2-3)
+### Time Travel, Unfortunately
 
-Harry sees McGonagall turn into a cat. Despite a prior of P(magic) ~ 0, the likelihood ratio is astronomical. We formalize the Bayesian update `P(H|E) = L*e / (L*e + (1-e))` and state the theorem that as L -> infinity, the posterior -> 1. The key insight: no prior is too small to overcome with strong enough evidence.
+The strongest part of the project so far lives in `TimeTravel`.
 
-## Building
+- [`HpmorFormalized/TimeTravel/Novikov.lean`](HpmorFormalized/TimeTravel/Novikov.lean) formalizes a version of Novikov self-consistency: finite time loops must settle into a paradox-free periodic story.
+- [`HpmorFormalized/TimeTravel/Paradox.lean`](HpmorFormalized/TimeTravel/Paradox.lean) models a toy paradox and gives the universe permission to cheat in exactly the way required to avoid contradiction.
 
-Requires [elan](https://github.com/leanprover/elan) (installs Lean 4 automatically).
+In other words: the Time-Turner does not get to shrug and create nonsense. The universe is allowed to be strange. It is not allowed to be inconsistent.
+
+### Bayesian Updates Like a Civilized Person
+
+[`HpmorFormalized/Bayes/Basic.lean`](HpmorFormalized/Bayes/Basic.lean) formalizes the classic HPMOR lesson from early chapters: even a tiny prior can be overwhelmed by sufficiently strong evidence.
+
+McGonagall turns into a cat. Your prior objects. Bayes has no sympathy.
+
+This module has the core setup and several basic results, with some of the more interesting analysis still to be completed.
+
+### Future Conquests
+
+[`HpmorFormalized/DecisionTheory/Basic.lean`](HpmorFormalized/DecisionTheory/Basic.lean) and [`HpmorFormalized/GameTheory/Basic.lean`](HpmorFormalized/GameTheory/Basic.lean) are the beginnings of a larger campaign:
+
+- prisoner's dilemma and precommitment
+- bargaining and Nash-style reasoning
+- credible threats
+- the general proposition that "planning ahead" should perhaps not be considered exotic
+
+Right now these modules are more promise than empire. That is acceptable. The point of a roadmap is that reality has not yet been bullied into compliance.
+
+## Why This Exists
+
+Because HPMOR is full of claims that invite escalation.
+
+Not "that sounds clever."
+
+Not "I agree with the vibe."
+
+Not even "this would make a good LessWrong comment thread."
+
+The interesting question is whether the ideas can survive formalization. Can the informal arguments be made explicit? Can the hidden assumptions be exposed? Can the dramatic speeches be translated into definitions, lemmas, and theorems?
+
+That is what this repo is for.
+
+## Build
+
+Requires [elan](https://github.com/leanprover/elan), which installs Lean and `lake`.
 
 ```bash
 git clone https://github.com/ngundotra/hpmor-formalized.git
 cd hpmor-formalized
-lake exe cache get    # download prebuilt Mathlib (~5 min)
-lake build            # build all modules
+lake exe cache get
+lake build
 ```
 
-## Project structure
-
-```
-hpmor-formalized/
-  lakefile.toml                          # Lake build config (Mathlib dependency)
-  lean-toolchain                         # Lean 4 v4.28.0
-  HpmorFormalized.lean                   # Root import (all modules)
-  HpmorFormalized/
-    TimeTravel/
-      Novikov.lean                       # Novikov self-consistency (fully proven)
-      Paradox.lean                       # Grandfather paradox (fully proven)
-    Bayes/
-      Basic.lean                         # Bayesian updates (partial)
-    DecisionTheory/
-      Basic.lean                         # Prisoner's dilemma (stub)
-    GameTheory/
-      Basic.lean                         # Negotiation equilibria (stub)
-  .github/workflows/ci.yml              # lake build on every push
-```
+If all goes well, Lean will verify the current state of the project with considerably less enthusiasm than Harry would display while explaining why this is obviously the correct use of his time.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add new formalizations, fill in `sorry`'d proofs, or propose new HPMOR claims to formalize.
+Contributions are welcome, especially if you enjoy any of the following:
+
+- filling in `sorry`s
+- formalizing a new HPMOR claim
+- cleaning up Lean proofs
+- turning vague rationalist gestures into explicit mathematics
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## References
 
 - [HPMOR full text](https://hpmor.com)
 - [Mathlib4 docs](https://leanprover-community.github.io/mathlib4_docs/)
-- [Novikov self-consistency principle](https://en.wikipedia.org/wiki/Novikov_self-consistency_principle)
 - [Lean 4 documentation](https://lean-lang.org/lean4/doc/)

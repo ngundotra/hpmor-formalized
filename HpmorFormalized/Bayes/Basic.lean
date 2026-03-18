@@ -66,7 +66,7 @@ theorem posterior_zero_prior (L : ℝ) :
 
 /-- When the likelihood ratio is 1 (evidence is equally likely under H and ¬H),
     the posterior equals the prior (evidence provides no update). -/
-theorem posterior_no_update (ε : ℝ) (hε : ε ≥ 0) (hε1 : ε ≤ 1) :
+theorem posterior_no_update (ε : ℝ) (_hε : ε ≥ 0) (_hε1 : ε ≤ 1) :
     bayesian_posterior ε 1 = ε := by
   unfold bayesian_posterior
   have h : 1 * ε + (1 - ε) = 1 := by ring
