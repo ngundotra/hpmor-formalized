@@ -142,6 +142,7 @@ theorem CausalDAG.wellFounded {V : Type*} [Finite V]
     (dag : CausalDAG V) : WellFounded dag.edge :=
   wellFounded_of_acyclic_finite dag.edge dag.acyclic
 
+set_option linter.unusedFintypeInType false in
 /-- **Topological Ordering Theorem.**
     Every DAG on a finite type admits a topological ordering: a function
     `ord : V → ℕ` such that `edge u v → ord u < ord v`.
@@ -154,19 +155,36 @@ theorem CausalDAG.wellFounded {V : Type*} [Finite V]
     well-foundedness, which gives us a depth function via
     well-founded recursion. -/
 theorem CausalDAG.topological_order_exists
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (dag : CausalDAG V) [DecidableRel dag.edge] :
+    {V : Type*} [Fintype V]
+    (dag : CausalDAG V) :
     ∃ ord : V → ℕ, IsTopologicalOrder dag ord := by
-  -- The proof strategy: use well-foundedness of the edge relation
-  -- (proved from acyclicity) to define a rank function by well-founded
-  -- recursion. This is mathematically correct but the Lean bookkeeping
-  -- for WellFounded.fix with Finset.sup is substantial.
-  have _hwf := dag.wellFounded
-  -- The rank function would be:
-  -- rank(v) = 0 if v has no predecessors
-  -- rank(v) = 1 + max { rank(u) | edge u v } otherwise
-  -- This is well-defined by well-foundedness.
-  sorry
+  classical
+  -- Define ord(v) = |{ w | TransGen edge w v }|, the number of
+  -- strict ancestors. If edge u v, then every ancestor of u is also
+  -- an ancestor of v, AND u itself is an ancestor of v but not of
+  -- itself (by acyclicity). So the ancestor set strictly grows.
+  have h_dec_tc : DecidableRel (TransGen dag.edge) := by
+    infer_instance
+  let ancestors (v : V) : Finset V :=
+    Finset.univ.filter (fun w => TransGen dag.edge w v)
+  refine ⟨fun v => (ancestors v).card, fun u v huv => ?_⟩
+  -- ancestors u ⊆ ancestors v (any ancestor of u is also one of v)
+  have h_sub : ancestors u ⊆ ancestors v := by
+    intro w hw
+    simp only [ancestors, Finset.mem_filter, Finset.mem_univ,
+      true_and] at hw ⊢
+    exact TransGen.trans hw (TransGen.single huv)
+  -- u ∈ ancestors v but u ∉ ancestors u (by acyclicity)
+  have h_u_in_v : u ∈ ancestors v := by
+    simp only [ancestors, Finset.mem_filter, Finset.mem_univ,
+      true_and]
+    exact TransGen.single huv
+  have h_u_not_in_u : u ∉ ancestors u := by
+    simp only [ancestors, Finset.mem_filter, Finset.mem_univ,
+      true_and]
+    exact dag.acyclic u
+  exact Finset.card_lt_card
+    ⟨h_sub, fun h => h_u_not_in_u (h h_u_in_v)⟩
 
 -- ============================================================================
 -- SECTION 4: Consistent Histories on General DAGs
@@ -198,7 +216,28 @@ theorem CausalDAG.consistent_history_exists_forest
       dag.edge u₁ v → dag.edge u₂ v → u₁ = u₂) :
     ∃ assign : StateAssignment V S,
       IsConsistentAssignment dag assign f := by
-  sorry
+  classical
+  -- Define assignment by well-founded recursion on the edge relation
+  -- For roots (no parent), assign an arbitrary state
+  -- For non-roots with parent u, assign f (recursive_call u)
+  let assign : V → S := dag.wellFounded.fix (fun v ih =>
+    if h : ∃ u, dag.edge u v then
+      f (ih h.choose h.choose_spec)
+    else
+      Classical.arbitrary S)
+  -- The proof that WellFounded.fix yields a consistent assignment
+  -- requires carefully unfolding the recursion equation at each vertex
+  -- and using at_most_one_parent to show the chosen parent equals u.
+  -- The WellFounded.fix_eq lemma gives the unfolding, but matching
+  -- the let-bound definition with the fix output requires careful
+  -- definitional equality management in Lean 4.
+  exact ⟨assign, fun u v huv => by
+    simp only [assign]
+    rw [WellFounded.fix_eq]
+    have hex : ∃ w, dag.edge w v := ⟨u, huv⟩
+    simp only [dif_pos hex]
+    have h_eq := at_most_one_parent v hex.choose u hex.choose_spec huv
+    subst h_eq; rfl⟩
 
 -- For the linear chain case, we provide a concrete proof.
 

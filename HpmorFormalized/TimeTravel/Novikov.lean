@@ -30,10 +30,8 @@ We provide two complementary formalizations:
   to `s` — a **periodic orbit** representing a paradox-free, stable history.
 
 ### 2. Directed Acyclic Graph (DAG) Causal Structure
-- Events are nodes in a directed graph.
-- Edges represent causal influence.
-- A DAG structure (no directed cycles) ensures a consistent causal ordering
-  exists, guaranteeing paradox-freedom.
+See `HpmorFormalized.TimeTravel.CausalDAG` for the DAG-based model, which
+uses a general relation with an explicit acyclicity condition.
 
 ## Main Results
 
@@ -46,11 +44,8 @@ We provide two complementary formalizations:
 3. `novikov_fixed_point_of_constant_composition`: If iterating the loop
    enough times collapses all states to one, that state is a fixed point.
 
-4. `dag_no_self_loop` / `dag_irreflexive`: DAG causal structures are
-   inherently paradox-free (no event can cause itself).
-
-5. `consistent_assignment_exists`: A DAG of events always admits a consistent
-   state assignment (topological ordering exists).
+4. See `CausalDAG.lean` for DAG-based results (no self-loops, topological
+   ordering, consistent histories for general DAGs).
 
 **Note**: This may be the first-ever Lean 4 formalization of Novikov's
 self-consistency principle.
@@ -155,67 +150,9 @@ theorem novikov_fixed_point_of_constant_composition
   erw [ Function.iterate_succ_apply' ]
   rw [ hc ]
 
--- ============================================================================
--- PART 2: DAG-Based Causal Structure Model
--- ============================================================================
-
-/-- A `CausalDAG` models the causal structure of events as a directed acyclic
-    graph. Events are indexed by `Fin n`, and `edge i j` means event `i`
-    causally influences event `j`. The `acyclic` condition ensures no causal
-    loops (the defining property of a DAG), and `order_consistent` enforces
-    that causal influence respects the temporal ordering. -/
-structure CausalDAG (n : ℕ) where
-  /-- `edge i j` holds when event `i` directly causes event `j`. -/
-  edge : Fin n → Fin n → Prop
-  /-- Causal edges respect temporal order: causes precede effects. -/
-  order_consistent : ∀ i j, edge i j → i.val < j.val
-
-/-- A DAG has no self-loops: no event can be its own cause. This is the
-    most basic paradox-freedom property — an event cannot cause itself. -/
-theorem dag_no_self_loop {n : ℕ} (dag : CausalDAG n) (i : Fin n) :
-    ¬ dag.edge i i := by
-  exact fun hi => lt_irrefl _ ( dag.order_consistent i i hi )
-
-/-- The causal relation of a DAG is irreflexive: the "causes" relation
-    can never loop back to the same event. -/
-theorem dag_irreflexive {n : ℕ} (dag : CausalDAG n) :
-    ∀ i, ¬ dag.edge i i := by
-  exact fun i => dag_no_self_loop dag i
-
-/-- The causal relation of a DAG is asymmetric: if `i` causes `j`, then
-    `j` cannot cause `i`. Mutual causation is impossible. -/
-theorem dag_asymmetric {n : ℕ} (dag : CausalDAG n) :
-    ∀ i j, dag.edge i j → ¬ dag.edge j i := by
-  intro i j h1 h2; linarith [ dag.order_consistent i j h1, dag.order_consistent j i h2 ] ;
-
-/-- A `ConsistentHistory` assigns a state from `S` to each event in a DAG,
-    such that each event's state is determined by a local rule `evolve` applied
-    to its predecessor's state. This models a universe where the state at
-    each event is uniquely determined by causal history. -/
-structure ConsistentHistory (n : ℕ) (S : Type*) (dag : CausalDAG n) where
-  /-- The state assigned to each event. -/
-  state : Fin n → S
-  /-- The local evolution rule: given a predecessor's state, produce the successor's state. -/
-  evolve : S → S
-  /-- Consistency: for every causal edge, the successor's state is the evolution
-      of the predecessor's state. -/
-  consistent : ∀ i j, dag.edge i j → state j = evolve (state i)
-
-/-- **Existence of Consistent Histories for Linear Chains.**
-    For a simple linear causal chain `0 → 1 → 2 → … → (n-1)`, a consistent
-    state assignment always exists: just propagate the initial state through
-    the evolution function. This demonstrates that acyclic causal structures
-    always admit paradox-free histories. -/
-theorem consistent_assignment_exists
-    (n : ℕ) (_hn : n > 0) (S : Type*) [Nonempty S]
-    (f : S → S) :
-    let dag : CausalDAG n := ⟨fun i j => j.val = i.val + 1, fun i j h => by omega⟩
-    ∃ ch : ConsistentHistory n S dag,
-      ch.evolve = f := by
-  fconstructor
-  · exact ⟨fun i => Nat.recOn i ( Classical.arbitrary S ) fun i hi => f hi, f,
-      fun i j h => by aesop⟩
-  · norm_num
+-- The DAG-based causal structure model has been moved to CausalDAG.lean
+-- for a more faithful formalization using general relations with explicit
+-- acyclicity conditions. See HpmorFormalized.TimeTravel.CausalDAG.
 
 -- ============================================================================
 -- PART 3: Connecting the Models — Time-Turner Sequences

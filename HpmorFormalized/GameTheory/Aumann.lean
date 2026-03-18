@@ -85,8 +85,8 @@ noncomputable def condProb {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
     of E given the agent's information cell at ω. -/
 noncomputable def posterior {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
     (μ : Ω → ℝ) (P : InfoPartition Ω) (E : Set Ω)
-    [DecidablePred (· ∈ E)] [DecidablePred (· ∈ P.cellSet ·)]
-    (ω : Ω) : ℝ :=
+    [DecidablePred (· ∈ E)] (ω : Ω)
+    [DecidablePred (· ∈ P.cellSet ω)] : ℝ :=
   condProb μ E (P.cellSet ω)
 
 -- ============================================================================

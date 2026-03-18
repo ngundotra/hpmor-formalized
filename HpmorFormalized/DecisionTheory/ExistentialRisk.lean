@@ -55,7 +55,7 @@ structure DecisionProblem (Outcome : Type*) [Fintype Outcome] where
 
 /-- An action specifies a probability distribution over outcomes.
     We model probabilities as nonneg reals that sum to 1. -/
-structure Action (Outcome : Type*) [Fintype Outcome] where
+structure RiskAction (Outcome : Type*) [Fintype Outcome] where
   /-- Probability of each outcome. -/
   prob : Outcome → ℝ
   /-- Probabilities are nonneg. -/
@@ -67,10 +67,6 @@ structure Action (Outcome : Type*) [Fintype Outcome] where
 -- § 2. The Core Theorem: Nonzero Probability of ⊥ Yields EU = ⊥
 -- ============================================================================
 
-/-- A simplified model: expected utility with just two outcomes (catastrophe and
-    survival), demonstrating the core issue. This avoids complications with
-    EReal summation over Fintype while capturing the essential mathematical content. -/
-
 /-- Expected utility of a binary gamble: with probability p get utility u_good,
     with probability (1-p) get utility u_bad. -/
 noncomputable def binary_eu (p : ℝ) (u_good u_bad : EReal) : EReal :=
@@ -81,7 +77,7 @@ noncomputable def binary_eu (p : ℝ) (u_good u_bad : EReal) : EReal :=
 
     This is the formal version of Harry's argument: any nonzero chance of
     existential catastrophe (utility -∞) makes the expected utility -∞. -/
-theorem eu_bot_of_pos_prob {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+theorem eu_bot_of_pos_prob {p : ℝ} (_hp : 0 < p) (hp1 : p < 1)
     (u_good : EReal) :
     binary_eu p u_good ⊥ = ⊥ := by
   unfold binary_eu
@@ -149,14 +145,12 @@ theorem lexicographic_discriminates
 -- § 4. Bounded Utility: The Other Fix
 -- ============================================================================
 
-/-- An alternative resolution: bound utility from below. If utility is bounded
-    in [-M, ∞) for some finite M, expected utility is always finite and
-    can discriminate between actions. -/
-
-/-- With bounded utility, higher survival probability yields higher expected utility. -/
+/-- With bounded (finite) utility, higher survival probability yields higher expected
+    utility. This is the alternative resolution: replace -∞ with a very large but
+    finite negative utility, and standard EU can again discriminate between actions. -/
 theorem bounded_eu_discriminates
     {p₁ p₂ : ℝ} {u_good u_bad : ℝ}
-    (hp₁ : 0 < p₁) (hp₁' : p₁ ≤ 1) (hp₂ : 0 < p₂) (hp₂' : p₂ ≤ 1)
+    (_hp₁ : 0 < p₁) (_hp₁' : p₁ ≤ 1) (_hp₂ : 0 < p₂) (_hp₂' : p₂ ≤ 1)
     (h_surv : p₁ < p₂)
     (h_util : u_bad < u_good) :
     p₁ * u_good + (1 - p₁) * u_bad < p₂ * u_good + (1 - p₂) * u_bad := by

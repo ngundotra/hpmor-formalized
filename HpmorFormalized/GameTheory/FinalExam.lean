@@ -182,25 +182,33 @@ theorem threshold_in_unit_interval (p : FinalExamPayoffs) :
     he believes his probability of success exceeds the threshold. -/
 theorem exploit_dominates_above_threshold (p : FinalExamPayoffs)
     (prob : ℝ) (hprob : prob > exploit_threshold p) :
-    harry_expected_payoff_3 p prob .exploit > harry_expected_payoff_3 p prob .comply := by
-  simp [harry_expected_payoff_3, exploit_threshold] at *
+    harry_expected_payoff_3 p prob .exploit >
+    harry_expected_payoff_3 p prob .comply := by
+  simp only [harry_expected_payoff_3, exploit_threshold, gt_iff_lt] at *
   have hdenom : p.harry_exploit_success - p.harry_exploit_fail > 0 := by
     linarith [p.exploit_success_beats_comply, p.comply_beats_refuse,
               p.exploit_fail_le_refuse]
-  have hprob' : (p.harry_comply - p.harry_exploit_fail) / (p.harry_exploit_success - p.harry_exploit_fail) < prob := hprob
-  rw [div_lt_iff hdenom] at hprob'
+  have hdenom_ne : p.harry_exploit_success - p.harry_exploit_fail ≠ 0 := ne_of_gt hdenom
+  have hprob' :
+      (p.harry_comply - p.harry_exploit_fail) /
+      (p.harry_exploit_success - p.harry_exploit_fail) < prob := hprob
+  rw [div_lt_iff₀ hdenom] at hprob'
   linarith
 
 /-- Conversely, below the threshold, compliance dominates the exploit. -/
 theorem comply_dominates_below_threshold (p : FinalExamPayoffs)
     (prob : ℝ) (hprob : prob < exploit_threshold p) :
-    harry_expected_payoff_3 p prob .comply > harry_expected_payoff_3 p prob .exploit := by
-  simp [harry_expected_payoff_3, exploit_threshold] at *
+    harry_expected_payoff_3 p prob .comply >
+    harry_expected_payoff_3 p prob .exploit := by
+  simp only [harry_expected_payoff_3, exploit_threshold, gt_iff_lt] at *
   have hdenom : p.harry_exploit_success - p.harry_exploit_fail > 0 := by
     linarith [p.exploit_success_beats_comply, p.comply_beats_refuse,
               p.exploit_fail_le_refuse]
-  have hprob' : prob < (p.harry_comply - p.harry_exploit_fail) / (p.harry_exploit_success - p.harry_exploit_fail) := hprob
-  rw [lt_div_iff hdenom] at hprob'
+  have hdenom_ne : p.harry_exploit_success - p.harry_exploit_fail ≠ 0 := ne_of_gt hdenom
+  have hprob' :
+      prob < (p.harry_comply - p.harry_exploit_fail) /
+      (p.harry_exploit_success - p.harry_exploit_fail) := hprob
+  rw [lt_div_iff₀ hdenom] at hprob'
   linarith
 
 /-- At exactly the threshold, Harry is indifferent between comply and exploit. -/
