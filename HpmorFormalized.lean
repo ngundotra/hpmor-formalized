@@ -4,4 +4,7 @@ import HpmorFormalized.TimeTravel.Novikov
 import HpmorFormalized.TimeTravel.Paradox
 import HpmorFormalized.Bayes.Basic
 import HpmorFormalized.DecisionTheory.Basic
+import HpmorFormalized.DecisionTheory.ExistentialRisk
 import HpmorFormalized.GameTheory.Basic
+import HpmorFormalized.GameTheory.FinalExam
+import HpmorFormalized.GameTheory.Aumann

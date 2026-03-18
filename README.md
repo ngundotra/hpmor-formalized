@@ -76,19 +76,50 @@ lake build
 
 If all goes well, Lean will verify the current state of the project with considerably less enthusiasm than Harry would display while explaining why this is obviously the correct use of his time.
 
+## Aristotle (Autoformalization)
+
+This project integrates with [Harmonic's Aristotle](https://aristotle.harmonic.fun) for automated proof generation. Aristotle can take a natural language proof goal and produce verified Lean 4 code against our Mathlib version.
+
+### Setup
+
+1. Get an API key at [aristotle.harmonic.fun/dashboard/keys](https://aristotle.harmonic.fun/dashboard/keys)
+2. Add to your shell config: `export ARISTOTLE_API_KEY=<your-key>`
+
+### Usage
+
+```bash
+# Submit a proof goal
+uv run aristotle submit "Prove that the posterior L*e/(L*e+(1-e)) tends to 1 as L tends to infinity" --project-dir .
+
+# Check status
+uv run aristotle list --limit 5
+
+# Download results (returns a tarball)
+uv run aristotle result <project-id> --destination /tmp/result.tar.gz
+
+# Extract and inspect
+mkdir -p /tmp/result && tar xzf /tmp/result.tar.gz -C /tmp/result
+cat /tmp/result/.tar_aristotle/ARISTOTLE_SUMMARY_*.md
+```
+
+### Claude Code integration
+
+If using [Claude Code](https://claude.com/claude-code), an Aristotle agent and `/aristotle` skill are available in `.claude/`. Agents can submit proofs, poll for results, and integrate generated code automatically.
+
 ## Contributing
 
 Contributions are welcome, especially if you enjoy any of the following:
 
 - filling in `sorry`s
 - formalizing a new HPMOR claim
-- cleaning up Lean proofs
 - turning vague rationalist gestures into explicit mathematics
+- stress-testing HPMOR claims and reporting what formalization reveals
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md).
 
 ## References
 
 - [HPMOR full text](https://hpmor.com)
 - [Mathlib4 docs](https://leanprover-community.github.io/mathlib4_docs/)
 - [Lean 4 documentation](https://lean-lang.org/lean4/doc/)
+- [Aristotle autoformalization](https://aristotle.harmonic.fun)

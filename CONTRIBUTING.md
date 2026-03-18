@@ -2,6 +2,12 @@
 
 We welcome contributions from anyone interested in formal verification, rationality, or HPMOR. No prior Lean experience required for some contribution types.
 
+> **Before you start:** Read [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md).
+> Every formalization in this project must be **falsifiable** (Tier 1),
+> should be **faithful** to the original HPMOR claim (Tier 2), and should
+> actively try to be **surprising** (Tier 3). We are stress-testing the
+> methods of rationality, not collecting tautologies.
+
 ## Ways to contribute
 
 ### 1. Fill in a `sorry`
@@ -23,14 +29,18 @@ grep -rn "sorry" HpmorFormalized/
 
 HPMOR is full of formalizable claims. Some ideas for new modules:
 
-| HPMOR Concept | Chapters | Possible Lean formalization |
-|--------------|----------|-----------------------------|
-| Conservation laws of magic | 4-6, 28-30 | Conservation laws as invariants of a dynamical system |
-| Aumann's agreement theorem | 22-24 | Common knowledge + Bayesian agents must agree |
-| Patronus 2.0 / Dementor model | 43-47 | Utility functions, expected value under existential risk |
-| Partial transfiguration | 28-29 | Continuous transformations on discrete structures |
-| Interdict of Merlin | 77-78 | Information-theoretic bounds on knowledge transmission |
-| Final exam (Ch. 113-122) | 113-122 | Multi-agent game under incomplete information |
+| HPMOR Concept | Chapters | Possible Lean formalization | Tier 3 potential |
+|--------------|----------|-----------------------------|------------------|
+| Aumann's agreement theorem | 22-24 | Common knowledge + Bayesian agents must agree | High: does it require common priors? HPMOR doesn't say |
+| Patronus 2.0 / Dementor model | 43-47 | Utility functions, expected value under existential risk | High: standard EU may not handle -infinity utility |
+| Conservation laws of magic | 4-6, 28-30 | Conservation laws as invariants of a dynamical system | Medium: what symmetry group does magic conservation imply? |
+| Iterated PD / folk theorem | 33 | Cooperation thresholds under iteration | High: find exact discount factor bounds Harry glosses over |
+| Interdict of Merlin | 77-78 | Information-theoretic bounds on knowledge transmission | Medium: what channel capacity does the Interdict imply? |
+| Final exam (Ch. 113-122) | 113-122 | Multi-agent game under incomplete information | High: is Harry's strategy actually optimal? |
+
+**Aim for Tier 3.** The best contributions don't just confirm what HPMOR
+says -- they reveal what HPMOR *didn't* say. Choose the most general setting,
+use the weakest hypotheses, and report what the proof actually required.
 
 To add a new module:
 
@@ -43,17 +53,20 @@ To add a new module:
 4. Define your structures and state your theorems
 5. Prove what you can, use `sorry` for the rest
 6. Run `lake build` to make sure everything compiles
+7. Write a `## Findings` section in the module docstring (see
+   [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md) for the template)
+8. Self-score against the acceptance scorecard before submitting
 
 ### 3. Improve existing proofs
 
-The TimeTravel proofs work but trigger Mathlib linter warnings (style issues, unused hypotheses). Cleaning these up is a great way to learn Lean and contribute without needing to write new math.
+Look for opportunities to **raise the tier** of existing formalizations:
 
-Common improvements:
-- Replace `cases'` with `obtain` or `rcases`
-- Replace `refine'` with `refine`
-- Replace `simp [...]` with `simp only [...]`
-- Remove unused hypotheses like `[DecidableEq S]` when `classical` suffices
-- Fix lines over 100 characters
+- Generalize a theorem that only works on a specific type to work on a class
+  (e.g., replace a `Bool` proof with a `Finite S` proof)
+- Weaken hypotheses and see if the theorem still holds -- if so, you've
+  found a sharper result
+- Add a `## Findings` section to a module that doesn't have one
+- Fix any remaining Mathlib linter warnings (run `lake build` and check)
 
 ### 4. Propose claims to formalize
 
@@ -121,6 +134,20 @@ Follow Mathlib conventions:
 - Use `sorry` freely for work-in-progress -- it compiles and communicates intent
 - Comment non-obvious proof steps
 - Keep proofs under ~20 lines where possible
+
+### Acceptance criteria
+
+Every theorem must pass the scorecard in [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md):
+
+- **Required:** Falsifiable (Tier 1) -- dropping a hypothesis must break it
+- **Required:** Non-trivial -- proof is not just `rfl` / `simp` / `decide`
+- **Required:** Faithful (Tier 2) -- a mathematician would recognize the original claim
+- **Preferred:** General -- about a class of objects, not a specific example
+- **Actively sought:** Surprising (Tier 3) -- formalization revealed something
+  the informal argument hid
+
+Include a `## Findings` section in your module docstring documenting what
+formalization taught you. Even "no hidden assumptions found" is worth stating.
 
 ## Using autoformalization tools
 

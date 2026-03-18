@@ -110,16 +110,50 @@ theorem posterior_pos (ε L : ℝ) (hε_pos : 0 < ε) (hε_lt : ε < 1) (hL : 0 
 -/
 theorem posterior_tendsto_one (ε : ℝ) (hε_pos : 0 < ε) (hε_lt : ε < 1) :
     Filter.Tendsto (bayesian_posterior ε) Filter.atTop (nhds 1) := by
-  sorry
+  have h1mε_pos : 0 < 1 - ε := sub_pos.mpr hε_lt
+  have denom_tendsto : Filter.Tendsto (fun L : ℝ => L * ε + (1 - ε)) Filter.atTop Filter.atTop := by
+    apply Filter.Tendsto.atTop_add
+    · exact Filter.Tendsto.atTop_mul_const hε_pos Filter.tendsto_id
+    · exact tendsto_const_nhds
+  have remainder_tendsto : Filter.Tendsto (fun L : ℝ => (1 - ε) / (L * ε + (1 - ε)))
+      Filter.atTop (nhds 0) :=
+    Filter.Tendsto.div_atTop tendsto_const_nhds denom_tendsto
+  have goal_tendsto : Filter.Tendsto (fun L : ℝ => 1 - (1 - ε) / (L * ε + (1 - ε)))
+      Filter.atTop (nhds (1 - 0)) :=
+    tendsto_const_nhds.sub remainder_tendsto
+  rw [sub_zero] at goal_tendsto
+  apply goal_tendsto.congr'
+  rw [Filter.eventuallyEq_iff_exists_mem]
+  refine ⟨Set.Ici 0, Filter.mem_atTop 0, ?_⟩
+  intro L hL
+  simp only [bayesian_posterior, Set.mem_Ici] at *
+  have hd : L * ε + (1 - ε) ≠ 0 := by
+    have : 0 < L * ε + (1 - ε) := by
+      have : 0 ≤ L * ε := mul_nonneg hL (le_of_lt hε_pos)
+      linarith
+    linarith
+  field_simp
+  ring
 
 /-- The posterior is monotonically increasing in the likelihood ratio L,
     for fixed prior ε ∈ (0, 1). More evidence always increases confidence. -/
 theorem posterior_monotone_in_L (ε : ℝ) (hε_pos : 0 < ε) (hε_lt : ε < 1) :
-    Monotone (bayesian_posterior ε) := by
-  sorry
+    MonotoneOn (bayesian_posterior ε) (Set.Ici 0) := by
+  intro a ha b hb hab
+  simp only [bayesian_posterior, Set.mem_Ici] at *
+  have h1ε : (0 : ℝ) < 1 - ε := sub_pos.mpr hε_lt
+  have ha_pos : 0 < a * ε + (1 - ε) := by nlinarith
+  have hb_pos : 0 < b * ε + (1 - ε) := by nlinarith
+  have key : a * ε * (b * ε + (1 - ε)) ≤ b * ε * (a * ε + (1 - ε)) := by
+    have h1 : 0 < ε * (1 - ε) := mul_pos hε_pos h1ε
+    nlinarith [mul_le_mul_of_nonneg_right hab (le_of_lt h1)]
+  exact (div_le_div_iff₀ ha_pos hb_pos).mpr key
 
 /-- Complementary result: the posterior is bounded above by 1.
     (Probability axiom: no posterior can exceed certainty.) -/
 theorem posterior_le_one (ε L : ℝ) (hε_pos : 0 < ε) (hε_lt : ε < 1) (hL : 0 < L) :
     bayesian_posterior ε L ≤ 1 := by
-  sorry
+  unfold bayesian_posterior
+  have hdenom_pos : 0 < L * ε + (1 - ε) := posterior_denom_pos ε L hε_pos hε_lt hL
+  rw [div_le_one hdenom_pos]
+  linarith

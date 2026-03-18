@@ -1,124 +1,136 @@
 # Formalization Roadmap
 
-**Progress: 15/19 theorems proven (79%)**
-
 > "The first thing a scientist does when they notice a confusing observation is
 > not to make up a story — it is to ask, what do I already know?"
 > — HPMOR Ch. 2
 
-## Status by module
+## Where things stand
 
-### TimeTravel (100% complete)
+### TimeTravel — proven, mostly Tier 2
 
-| # | Theorem | File | Proven |
-|---|---------|------|--------|
-| 1 | `novikov_periodic_consistency` | Novikov.lean | Yes |
-| 2 | `exists_iterate_eq_of_finite` | Novikov.lean | Yes |
-| 3 | `periodic_point_of_iterate_eq` | Novikov.lean | Yes |
-| 4 | `novikov_fixed_point_of_idempotent` | Novikov.lean | Yes |
-| 5 | `novikov_fixed_point_of_constant_composition` | Novikov.lean | Yes |
-| 6 | `dag_no_self_loop` | Novikov.lean | Yes |
-| 7 | `dag_irreflexive` | Novikov.lean | Yes |
-| 8 | `dag_asymmetric` | Novikov.lean | Yes |
-| 9 | `consistent_assignment_exists` | Novikov.lean | Yes |
-| 10 | `time_turner_consistency` | Novikov.lean | Yes |
-| 11 | `actionA_inconsistent` | Paradox.lean | Yes |
-| 12 | `actionB_inconsistent` | Paradox.lean | Yes |
-| 13 | `no_consistent_state_AB` | Paradox.lean | Yes |
-| 14 | `universeOverride_consistent` | Paradox.lean | Yes |
-| 15 | `paradox_resolved` | Paradox.lean | Yes |
-| 16 | `unique_consistent_state` | Paradox.lean | Yes |
+The Novikov self-consistency results are the strongest work in the project.
+The core theorem — every deterministic evolution on a finite state space
+admits a periodic orbit — is general, falsifiable, and faithful to the
+HPMOR claim. The fixed-point variants for idempotent and eventually-constant
+transitions are solid supporting results.
 
-### Bayes (62% complete)
+**What's weak:** The DAG causal-structure model bakes acyclicity into the
+definition (indexing by `Fin n`), which makes all the DAG theorems trivial
+consequences of `<` being irreflexive and asymmetric. The "consistent
+histories" result only handles linear chains, not arbitrary DAGs. These
+are Tier 1 at best.
 
-| # | Theorem | File | Proven | Difficulty | Notes |
-|---|---------|------|--------|------------|-------|
-| 1 | `posterior_formula` | Basic.lean | Yes | — | |
-| 2 | `posterior_zero_prior` | Basic.lean | Yes | — | |
-| 3 | `posterior_no_update` | Basic.lean | Yes | — | |
-| 4 | `posterior_denom_pos` | Basic.lean | Yes | — | |
-| 5 | `posterior_pos` | Basic.lean | Yes | — | |
-| 6 | `posterior_tendsto_one` | Basic.lean | **sorry** | Medium | Needs `Filter.Tendsto`, real analysis. The key HPMOR Ch. 2-3 claim. |
-| 7 | `posterior_monotone_in_L` | Basic.lean | **sorry** | Easy-Medium | Monotonicity of L*e/(L*e + (1-e)) in L |
-| 8 | `posterior_le_one` | Basic.lean | **sorry** | Easy | Algebraic: numerator <= denominator |
+The grandfather paradox module is entirely Tier 1 — every theorem operates
+on a hardcoded 3-element enum with proofs by `rfl`, `simp`, or `decide`.
+It illustrates the idea but proves nothing general.
 
-### DecisionTheory (100% of stated theorems, but module is a stub)
+**Path to Tier 3:**
+- Prove tight bounds on the minimal period (does it divide `|S|!`?)
+- Identify the exact algebraic structure needed — does this reduce to a
+  known fixed-point theorem?
+- Redefine the DAG model using transitive-closure acyclicity and prove
+  topological ordering exists (non-trivial, faithful)
+- Replace the paradox module with general fixed-point characterization:
+  "for any non-injective transition on a finite type, characterize when
+  fixed points exist and when they're unique"
 
-| # | Theorem | File | Proven |
-|---|---------|------|--------|
-| 1 | `dominant_strategy_defect` | Basic.lean | Yes |
-| 2 | `precommitment_cooperation_dominates` | Basic.lean | Yes |
+### Bayes — the key claim is nearly complete
 
-### GameTheory (100% of stated theorems, but module is a stub)
+The definitions and basic properties are in place (Tier 1 — definitional
+consequences). The three substantive theorems — posterior tends to 1 as
+evidence grows, monotonicity in likelihood ratio, and the upper bound —
+are the actual HPMOR claim from Ch. 2-3. Two of three are now proven.
 
-| # | Theorem | File | Proven |
-|---|---------|------|--------|
-| 1 | `nash_bargaining_zero_at_disagreement` | Basic.lean | Yes |
+**Path to Tier 3:**
+- What is the *rate* of convergence? Does the proof reveal whether Harry's
+  update was too fast or too slow for the evidence he observed?
+- Can we bound how much evidence is needed to reach a given posterior
+  threshold, as a function of the prior?
 
-## Unformalized HPMOR claims (backlog)
+### DecisionTheory — stub, Tier 1
 
-Claims extracted from the text, not yet modeled. Ordered by estimated impact and feasibility.
+Two theorems about the Prisoner's Dilemma: defection dominates, and mutual
+precommitment to cooperation beats mutual defection. Both are trivial
+consequences of the payoff definitions.
 
-### High priority (core HPMOR rationality concepts)
+**Path to substance:**
+- Iterated PD with discount factors — find the exact cooperation threshold
+- Subgame-perfect equilibrium — credible threats require SPE, not just NE
+- Precommitment analysis — prove that restricting your strategy set can
+  increase your equilibrium payoff
 
-| Claim | Chapters | Mathematical content | Estimated difficulty |
-|-------|----------|---------------------|---------------------|
-| Aumann's agreement theorem | 22-24 | Common-knowledge Bayesian agents with the same prior cannot agree to disagree | Hard (requires probability spaces, common knowledge operator) |
-| Conservation of magic | 4-6, 28-30 | If magic obeys conservation laws, model as invariant of a discrete dynamical system | Medium |
-| Expected utility under existential risk | 43-47 | Dementor/Patronus: maximizing EU when one outcome is annihilation (utility = -inf) | Medium |
-| Multiple hypothesis testing | 8-9 | Comparing magic hypotheses: "Occam's razor" as minimum description length | Medium |
+### GameTheory — stub, Tier 1
 
-### Medium priority (game theory extensions)
+One theorem about Nash bargaining at the disagreement point. Definitions
+only, no real content yet.
 
-| Claim | Chapters | Mathematical content | Estimated difficulty |
-|-------|----------|---------------------|---------------------|
-| Subgame-perfect equilibrium | 54-56, 113-122 | Credible threats require SPE, not just NE | Medium |
-| Iterated PD / Tit-for-Tat | 33 | Harry's argument that iteration changes the equilibrium | Easy-Medium |
-| Mixed-strategy NE existence | 33 | Nash's theorem via Brouwer/Kakutani fixed point | Hard (Brouwer in Mathlib) |
-| Ultimatum game SPE | 113-122 | Voldemort confrontation as ultimatum with credible threats | Medium |
-| Three-player coalition (Shapley) | 33 | Harry/Draco/Hermione coalition formation | Hard |
-| Precommitment changes the game | 75-77 | Restricting your strategy set can increase your equilibrium payoff | Medium |
+**Path to substance:**
+- Nash equilibrium existence (requires Brouwer in Mathlib)
+- Aumann's agreement theorem — the big Tier 3 target
+- Shapley values for the Harry/Draco/Hermione coalition
 
-### Lower priority (interesting but speculative)
+## Quality tiers (see [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md))
 
-| Claim | Chapters | Mathematical content | Estimated difficulty |
-|-------|----------|---------------------|---------------------|
-| Partial transfiguration | 28-29 | Continuous maps on discrete structures (timeless physics interpretation) | Research-level |
-| Interdict of Merlin | 77-78 | Information-theoretic limits: maximum entropy transfer under channel constraints | Hard |
-| Simulation argument | 46 | Probability in simulated universes (anthropic reasoning) | Research-level |
-| Fermi paradox / Great Filter | 21 | Bayesian estimation of existential risk from observational silence | Medium |
+| Module | Current tier | What it would take to reach Tier 3 |
+|--------|-------------|-----------------------------------|
+| TimeTravel / Novikov | Tier 2 | Tight period bounds, connection to known fixed-point theory |
+| TimeTravel / DAG model | Tier 1 | Rebuild with transitive-closure acyclicity |
+| TimeTravel / Paradox | Tier 1 | Generalize to arbitrary transitions on finite types |
+| Bayes | Tier 1-2 | Convergence rate analysis, evidence-requirement bounds |
+| DecisionTheory | Tier 1 | Iterated PD folk theorem with exact discount thresholds |
+| GameTheory | Tier 1 | Aumann's agreement theorem (hidden assumption: common priors?) |
 
-## Proof cleanup backlog
+## Unformalized claims (backlog)
 
-The TimeTravel module triggers Mathlib linter warnings. These are style issues, not correctness issues, but cleaning them up improves maintainability.
+Ordered by Tier 3 potential — how likely is formalization to reveal
+something the informal argument hid?
 
-| Issue | Location | Fix |
-|-------|----------|-----|
-| `cases'` deprecated | Novikov.lean:102-103 | Replace with `obtain` or `rcases` |
-| `refine'` deprecated | Novikov.lean:104 | Replace with `refine` |
-| `simp` should be `simp only` | Novikov.lean:143 | Run `simp?` to get explicit lemma list |
-| Lines over 100 chars | Novikov.lean:101,113 | Break into multiple lines |
-| Unused `[Fintype S]` hypotheses | Multiple theorems | Replace with `[Finite S]` + `Fintype.ofFinite` |
-| Unused `[DecidableEq S]` hypotheses | Multiple theorems | Remove and use `classical` |
-| Unused variable `hn` | Novikov.lean:140,200 | Remove or use |
-| Multi-goal tactic | Novikov.lean:206 | Focus with `·` |
+### High Tier 3 potential
 
-## Autoformalization tool log
+| Claim | Chapters | Why it might surprise us |
+|-------|----------|------------------------|
+| Aumann's agreement theorem | 22-24 | Requires common priors, not just common knowledge of rationality. HPMOR doesn't mention this. |
+| Expected utility under existential risk | 43-47 | Standard EU may not handle -infinity utility. Harry's Dementor reasoning may require a non-standard framework. |
+| Iterated PD / folk theorem | 33 | Harry says "iteration helps" — but cooperation is sustainable iff the discount factor exceeds a specific threshold. What is it? |
+| Final exam game theory | 113-122 | Is Harry's strategy actually optimal? Or just good enough? |
 
-Track which tools were tried on which claims and whether they succeeded. Update this as we experiment.
+### Medium Tier 3 potential
 
-| Claim | Tool | Result | Notes |
-|-------|------|--------|-------|
-| Novikov self-consistency | Manual + LLM assist | Success | Proofs generated with LLM guidance, verified in Lean |
-| Grandfather paradox | Manual + LLM assist | Success | Straightforward fixed-point model |
-| Bayesian posterior (definitions) | Manual | Success | Definitions are simple |
-| Bayesian posterior (limit) | — | Not yet attempted | Good candidate for Aristotle or AXLE |
-| Prisoner's dilemma | Manual | Success (trivial) | Definitions only, real work is SPE |
+| Claim | Chapters | Why it might surprise us |
+|-------|----------|------------------------|
+| Conservation of magic | 4-6, 28-30 | What symmetry group does conservation imply? Noether's theorem in reverse. |
+| Interdict of Merlin | 77-78 | What channel capacity does the Interdict impose? Information-theoretic bound. |
+| Precommitment changes the game | 75-77 | Exact conditions under which restricting your strategy set helps. |
+| Subgame-perfect equilibrium | 54-56, 113-122 | Does HPMOR's "credible threat" reasoning actually require SPE, or is NE sufficient? |
+
+### Lower Tier 3 potential
+
+| Claim | Chapters | Notes |
+|-------|----------|-------|
+| Multiple hypothesis testing | 8-9 | Occam's razor as MDL — well-understood territory |
+| Mixed-strategy NE existence | 33 | Hard to formalize (Brouwer) but unlikely to surprise |
+| Partial transfiguration | 28-29 | Research-level, speculative |
+| Simulation argument | 46 | Research-level, speculative |
+| Fermi paradox / Great Filter | 21 | Bayesian estimation — straightforward |
+
+## Cleanup done
+
+~~The TimeTravel module had Mathlib linter warnings (deprecated tactics,
+unused hypotheses, long lines).~~ Fixed. All linter warnings resolved.
+
+## Autoformalization tools
+
+| Tool | Claims attempted | Result |
+|------|-----------------|--------|
+| Aristotle (Harmonic) | Infinitely many primes (test), Bayesian posterior proofs | Success — generated valid Lean 4 with correct Mathlib usage |
+| Manual + LLM assist | Novikov, grandfather paradox, basic definitions | Success |
+
+See [README.md](README.md) for Aristotle setup instructions.
 
 ## How to use this file
 
-1. Pick a row from any table above
-2. If it says **sorry**: fill in the proof
-3. If it's in the backlog: create the module, state the theorems, prove what you can
+1. Pick a module or backlog claim
+2. Check its current tier and path to Tier 3
+3. Formalize with the goal of reaching Tier 3 (see [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md))
 4. Update this file when you finish something
 5. Run `lake build` before submitting
