@@ -5,200 +5,340 @@ import Mathlib
 
 **HPMOR Chapters**: 22-24 (Bayesian reasoning in negotiations with Draco)
 
+**Reference**: Robert Aumann, "Agreeing to Disagree" (1976)
+
 **Claim Formalized**:
 Two rational Bayesian agents who share a common prior and have common knowledge
 of each other's posterior probabilities for some event *must* agree — their
 posteriors must be equal. This is Aumann's Agreement Theorem (1976).
 
-**Hidden Assumption Exposed by Formalization**:
+**Hidden Assumption Exposed by Formalization (Tier 3)**:
 HPMOR presents Bayesian reasoning as sufficient for rational agents to converge,
 but *never explicitly mentions the common priors assumption*. The formalization
 reveals this is absolutely essential: without a shared prior, two perfect
 Bayesians can rationally disagree even with common knowledge of each other's
-posteriors. This is a Tier 3 finding — the formalization exposes a hidden
-assumption that the narrative glosses over.
+posteriors. See `no_agreement_without_common_priors` below.
 
-## Mathematical Setup
+## Formalization
 
 We model:
-- `Ω` : a finite type of possible states of the world
-- `μ` : a common prior probability measure on `Ω` (the hidden assumption!)
-- `𝒫₁, 𝒫₂` : partitions of `Ω` representing each agent's information
-- Posteriors as conditional probabilities given partition cells
-- Common knowledge as the join (coarsest common refinement) of partitions
+1. A finite type `Ω` for states of the world.
+2. A prior probability distribution `μ : Ω → ℝ` (non-negative, summing to 1).
+3. Information partitions `P₁` and `P₂` for each agent, represented by
+   labeling functions `Ω → ℕ`. Two states are in the same cell iff they
+   receive the same label.
+4. Posterior probabilities as conditional expectations:
+   `posterior μ P E ω = (∑_{ω' ∈ cell(ω)} 𝟙_E(ω') · μ(ω')) /
+                         (∑_{ω' ∈ cell(ω)} μ(ω'))`.
+5. Common knowledge as the meet (coarsest common coarsening) of the two
+   partitions: two states are in the same common-knowledge cell iff they
+   are connected by a chain through `P₁`-cells and `P₂`-cells.
 
-## Key Result
+The key insight is that a common-knowledge cell `M` is simultaneously a
+disjoint union of `P₁`-cells and a disjoint union of `P₂`-cells. If the
+posterior is constant (= p) on every `P₁`-cell within `M`, then summing
+gives `∑_{ω ∈ M ∩ E} μ(ω) = p · ∑_{ω ∈ M} μ(ω)`, and similarly for q.
+Since `M` has positive measure, `p = q`.
 
-`aumann_agreement`: If both agents' posteriors for event `E` are common
-knowledge, then those posteriors must be equal.
+## Main Results
 
-## References
-
-- R. Aumann, "Agreeing to Disagree", The Annals of Statistics, 1976
-- S. Hart & Y. Tauman, "Market Crashes Without External Shocks", 2004
+- `Aumann.posterior_const_sum`: The algebraic core — constant posteriors
+  on a union of cells imply a global sum identity.
+- `Aumann.aumann_agreement`: The full theorem.
+- `no_agreement_without_common_priors`: Counterexample showing common
+  priors are necessary (the hidden assumption HPMOR glosses over).
 -/
 
-open scoped BigOperators
+open Finset BigOperators
+
+namespace Aumann
+
+variable {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
 
 -- ============================================================================
--- § 1. Information Partitions and Posteriors
+-- § 1. Information Partitions
 -- ============================================================================
 
-/-- An information partition on a finite type `Ω` is represented by a function
-    that maps each state to its equivalence class (partition cell).
-    Two states are in the same cell iff the agent cannot distinguish them. -/
-structure InfoPartition (Ω : Type*) where
-  /-- The cell assignment: maps each state to a label identifying its cell -/
-  cell : Ω → ℕ
+/-- An information partition on a finite state space, represented by a
+    labeling function. States in the same cell receive the same label. -/
+structure InfoPartition (Ω : Type*) [Fintype Ω] [DecidableEq Ω] where
+  /-- The labeling function assigning each state to its partition cell. -/
+  label : Ω → ℕ
 
-/-- The partition cell containing state `ω` — the set of states the agent
-    considers possible when the true state is `ω`. -/
-def InfoPartition.cellSet {Ω : Type*} (P : InfoPartition Ω) (ω : Ω) : Set Ω :=
-  {ω' : Ω | P.cell ω' = P.cell ω}
+namespace InfoPartition
 
-/-- Two states are in the same cell of a partition. -/
-def InfoPartition.sameCell {Ω : Type*} (P : InfoPartition Ω) (ω₁ ω₂ : Ω) : Prop :=
-  P.cell ω₁ = P.cell ω₂
+variable (P : InfoPartition Ω)
 
-/-- The common knowledge partition (join) of two information partitions.
-    State ω₁ and ω₂ are in the same common knowledge cell iff they cannot
-    be distinguished by *either* agent. This is the finest partition that
-    is coarser than both P₁ and P₂.
+/-- The cell of the partition containing state `ω`. -/
+def cell (ω : Ω) : Finset Ω :=
+  Finset.univ.filter (fun ω' => P.label ω' = P.label ω)
 
-    We model this as: ω₁ and ω₂ are in the same cell iff both agents
-    assign them to the same respective cells. -/
-def commonKnowledgePartition {Ω : Type*} (P₁ P₂ : InfoPartition Ω) : InfoPartition Ω where
-  cell := fun ω => Nat.pair (P₁.cell ω) (P₂.cell ω)
+@[simp]
+lemma mem_cell_iff (ω ω' : Ω) :
+    ω' ∈ P.cell ω ↔ P.label ω' = P.label ω := by
+  simp [cell]
 
--- ============================================================================
--- § 2. Posteriors on Finite Spaces
--- ============================================================================
+lemma mem_cell_self (ω : Ω) : ω ∈ P.cell ω := by simp
 
-/-- The posterior probability of event E given that the true state is in
-    the set `C`, under measure `μ`. This is P(E | C) = μ(E ∩ C) / μ(C). -/
-noncomputable def condProb {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
-    (μ : Ω → ℝ) (E C : Set Ω) [DecidablePred (· ∈ E)] [DecidablePred (· ∈ C)] : ℝ :=
-  (∑ ω : Ω, if ω ∈ E ∧ ω ∈ C then μ ω else 0) /
-  (∑ ω : Ω, if ω ∈ C then μ ω else 0)
+lemma cell_eq_of_same_label {ω₁ ω₂ : Ω}
+    (h : P.label ω₁ = P.label ω₂) :
+    P.cell ω₁ = P.cell ω₂ := by
+  ext ω; simp [cell, h]
 
-/-- Agent's posterior for event E at state ω: the conditional probability
-    of E given the agent's information cell at ω. -/
-noncomputable def posterior {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
-    (μ : Ω → ℝ) (P : InfoPartition Ω) (E : Set Ω)
-    [DecidablePred (· ∈ E)] (ω : Ω)
-    [DecidablePred (· ∈ P.cellSet ω)] : ℝ :=
-  condProb μ E (P.cellSet ω)
+lemma cell_eq_of_mem {ω₁ ω₂ : Ω} (h : ω₂ ∈ P.cell ω₁) :
+    P.cell ω₂ = P.cell ω₁ :=
+  cell_eq_of_same_label P (by simpa using h)
+
+lemma cell_nonempty (ω : Ω) : (P.cell ω).Nonempty :=
+  ⟨ω, P.mem_cell_self ω⟩
+
+/-- Two cells are either equal or disjoint. -/
+lemma cell_eq_or_disjoint (ω₁ ω₂ : Ω) :
+    P.cell ω₁ = P.cell ω₂ ∨
+      Disjoint (P.cell ω₁) (P.cell ω₂) := by
+  by_cases h : P.label ω₁ = P.label ω₂ <;>
+    simp_all +decide [Finset.disjoint_left,
+      Finset.ext_iff]
+
+end InfoPartition
 
 -- ============================================================================
--- § 3. Aumann's Agreement Theorem (Simplified Finite Version)
+-- § 2. Posterior Probabilities
 -- ============================================================================
 
-/-- **Aumann's Agreement Theorem (Key Lemma).**
-
-    If two agents have the same prior, and their posteriors for event E
-    are constant (equal to p and q respectively) on a common knowledge cell C,
-    then p = q.
-
-    The proof idea: on any cell C where both posteriors are constant,
-    the law of total probability forces:
-      p · μ(C) = μ(E ∩ C) = q · μ(C)
-    Since μ(C) > 0 (the cell is non-empty and the prior is positive),
-    we get p = q.
-
-    **Key hidden assumption**: both agents use the SAME prior μ. This is
-    what HPMOR glosses over — the "common priors" assumption is essential.
-    Without it, the theorem fails completely. -/
-theorem aumann_agreement_finite
-    {n : ℕ} (hn : 0 < n)
-    (μ : Fin n → ℝ)
-    (hμ_pos : ∀ i, 0 < μ i)
-    (hμ_sum : ∑ i, μ i = 1)
-    (E : Set (Fin n)) [DecidablePred (· ∈ E)]
-    (P₁ P₂ : InfoPartition (Fin n))
-    -- Common knowledge cell
-    (C : Set (Fin n)) [DecidablePred (· ∈ C)]
-    (hC_nonempty : ∃ ω, ω ∈ C)
-    -- C is a union of P₁-cells and P₂-cells (common knowledge requirement)
-    (_hC_ck₁ : ∀ ω ∈ C, ∀ ω', P₁.cell ω' = P₁.cell ω → ω' ∈ C)
-    (_hC_ck₂ : ∀ ω ∈ C, ∀ ω', P₂.cell ω' = P₂.cell ω → ω' ∈ C)
-    -- Agent 1's posterior is constant p on C
-    (p : ℝ)
-    (hp : ∀ ω ∈ C,
-      (∑ i, if i ∈ E ∧ P₁.cell i = P₁.cell ω then μ i else 0) =
-      p * (∑ i, if P₁.cell i = P₁.cell ω then μ i else 0))
-    -- Agent 2's posterior is constant q on C
-    (q : ℝ)
-    (hq : ∀ ω ∈ C,
-      (∑ i, if i ∈ E ∧ P₂.cell i = P₂.cell ω then μ i else 0) =
-      q * (∑ i, if P₂.cell i = P₂.cell ω then μ i else 0))
-    : p = q := by
-  -- Key insight: sum over all states in C using the law of total probability.
-  -- Since C is a union of P₁-cells, summing agent 1's posterior equation
-  -- over all P₁-cells in C gives: μ(E ∩ C) = p · μ(C).
-  -- Similarly for agent 2: μ(E ∩ C) = q · μ(C).
-  -- Since μ(C) > 0, we get p = q.
-  --
-  -- The full proof requires careful bookkeeping with finite sums.
-  -- We state the key intermediate results:
-
-  -- μ(C) > 0 since C is nonempty and all weights are positive
-  have hC_pos : 0 < ∑ i, if i ∈ C then μ i else 0 := by
-    obtain ⟨ω₀, hω₀⟩ := hC_nonempty
-    apply Finset.sum_pos'
-    · intro i _
-      split_ifs <;> [exact le_of_lt (hμ_pos i); exact le_refl 0]
-    · exact ⟨ω₀, Finset.mem_univ _, by simp [hω₀, hμ_pos ω₀]⟩
-
-  -- The proof proceeds by showing both p · μ(C) and q · μ(C) equal μ(E ∩ C).
-  -- This requires decomposing C into partition cells and using hp, hq.
-  -- Due to the complexity of the partition cell decomposition in Lean 4,
-  -- we provide this as sorry for now and document the mathematical argument.
-  sorry
+/-- The posterior probability of event `E` at state `ω`, given prior `μ`
+    and information partition `P`:
+    `P(E | cell(ω)) = ∑_{ω' ∈ cell(ω)} 𝟙_E(ω')·μ(ω') /
+                       ∑_{ω' ∈ cell(ω)} μ(ω')` -/
+noncomputable def posterior (μ : Ω → ℝ) (P : InfoPartition Ω)
+    (E : Finset Ω) (ω : Ω) : ℝ :=
+  (∑ ω' ∈ P.cell ω, if ω' ∈ E then μ ω' else 0) /
+  (∑ ω' ∈ P.cell ω, μ ω')
 
 -- ============================================================================
--- § 4. Why Common Priors Matter: A Counterexample Without Them
+-- § 3. Common Knowledge (Meet of Partitions)
 -- ============================================================================
 
-/-- **Counterexample: Disagreement is possible without common priors.**
+/-- Two states are directly connected if they share a cell in either
+    partition. -/
+def DirectlyConnected
+    (P₁ P₂ : InfoPartition Ω) (ω₁ ω₂ : Ω) : Prop :=
+  P₁.label ω₁ = P₁.label ω₂ ∨ P₂.label ω₁ = P₂.label ω₂
 
-    With two states {0, 1} and event E = {0}:
-    - Agent 1 has prior (0.9, 0.1) → posterior for E is 0.9
-    - Agent 2 has prior (0.1, 0.9) → posterior for E is 0.1
-    - Even with full common knowledge (trivial partition), they disagree!
+/-- Common knowledge equivalence: the equivalence relation generated
+    by direct connection through either partition. This is the meet of
+    `P₁` and `P₂` in the lattice of partitions (coarsest common
+    coarsening).
 
-    This demonstrates that the common prior assumption is *necessary* for
-    Aumann's theorem. HPMOR's treatment of rational disagreement implicitly
-    assumes common priors without stating this assumption. -/
+    Two states are common-knowledge equivalent iff there is a finite
+    chain `ω₁ ~ ω₂ ~ ... ~ ωₙ` where each link shares a `P₁`-cell
+    or `P₂`-cell. -/
+def CommonKnowledgeEquiv
+    (P₁ P₂ : InfoPartition Ω) (ω₁ ω₂ : Ω) : Prop :=
+  Relation.EqvGen (DirectlyConnected P₁ P₂) ω₁ ω₂
+
+/-- Common knowledge equivalence is an equivalence relation. -/
+lemma commonKnowledgeEquiv_equivalence
+    (P₁ P₂ : InfoPartition Ω) :
+    Equivalence (CommonKnowledgeEquiv P₁ P₂) :=
+  Relation.EqvGen.is_equivalence _
+
+/-- A set `M` is a union of cells of partition `P`: if `ω ∈ M`, then
+    the entire cell containing `ω` is in `M`. -/
+def IsUnionOfCells
+    (P : InfoPartition Ω) (M : Finset Ω) : Prop :=
+  ∀ ω ∈ M, P.cell ω ⊆ M
+
+/-- Every common-knowledge cell is a union of `P₁`-cells. -/
+lemma commonKnowledge_isUnionOfCells₁
+    (P₁ P₂ : InfoPartition Ω) (M : Finset Ω)
+    (hM : ∀ ω₁ ∈ M, ∀ ω₂,
+      CommonKnowledgeEquiv P₁ P₂ ω₁ ω₂ → ω₂ ∈ M) :
+    IsUnionOfCells P₁ M := by
+  intro ω hω ω' hω'
+  rw [InfoPartition.mem_cell_iff] at hω'
+  exact hM ω hω ω'
+    (Relation.EqvGen.rel _ _ (Or.inl hω'.symm))
+
+/-- Every common-knowledge cell is a union of `P₂`-cells. -/
+lemma commonKnowledge_isUnionOfCells₂
+    (P₁ P₂ : InfoPartition Ω) (M : Finset Ω)
+    (hM : ∀ ω₁ ∈ M, ∀ ω₂,
+      CommonKnowledgeEquiv P₁ P₂ ω₁ ω₂ → ω₂ ∈ M) :
+    IsUnionOfCells P₂ M := by
+  intro ω hω ω' hω'
+  rw [InfoPartition.mem_cell_iff] at hω'
+  exact hM ω hω ω'
+    (Relation.EqvGen.rel _ _ (Or.inr hω'.symm))
+
+-- ============================================================================
+-- § 4. Key Algebraic Lemma
+-- ============================================================================
+
+/-- If `posterior μ P E ω = p` and the cell has positive measure, then
+    `∑_{ω' ∈ cell(ω)} 𝟙_E(ω')·μ(ω') =
+      p · ∑_{ω' ∈ cell(ω)} μ(ω')`. -/
+lemma posterior_eq_iff_sum (μ : Ω → ℝ) (P : InfoPartition Ω)
+    (E : Finset Ω) (ω : Ω) (p : ℝ)
+    (hpos : 0 < ∑ ω' ∈ P.cell ω, μ ω') :
+    posterior μ P E ω = p ↔
+    ∑ ω' ∈ P.cell ω, (if ω' ∈ E then μ ω' else 0) =
+      p * ∑ ω' ∈ P.cell ω, μ ω' := by
+  unfold posterior
+  constructor
+  · intro h
+    rw [div_eq_iff (ne_of_gt hpos)] at h
+    linarith
+  · intro h
+    rw [div_eq_iff (ne_of_gt hpos)]
+    linarith
+
+/-- **Core algebraic lemma**: If `posterior μ P E` equals `p` at every
+    state in `M`, and `M` is a union of `P`-cells with all cells
+    having positive measure, then
+    `∑_{ω ∈ M} 𝟙_E(ω)·μ(ω) = p · ∑_{ω ∈ M} μ(ω)`. -/
+theorem posterior_const_sum (μ : Ω → ℝ) (_hμ : ∀ ω, 0 ≤ μ ω)
+    (P : InfoPartition Ω) (E : Finset Ω)
+    (M : Finset Ω) (hM : IsUnionOfCells P M)
+    (p : ℝ) (hp : ∀ ω ∈ M, posterior μ P E ω = p)
+    (hcell_pos : ∀ ω ∈ M,
+      0 < ∑ ω' ∈ P.cell ω, μ ω') :
+    ∑ ω ∈ M, (if ω ∈ E then μ ω else 0) =
+      p * ∑ ω ∈ M, μ ω := by
+  -- Decompose sums over M into fibers by P.label
+  have h_lhs :
+      ∑ ω ∈ M, (if ω ∈ E then μ ω else 0) =
+      ∑ l ∈ M.image P.label,
+        ∑ ω ∈ M.filter (fun ω' => P.label ω' = l),
+          (if ω ∈ E then μ ω else 0) := by
+    rw [Finset.sum_image']; aesop
+  have h_fiber : ∀ l ∈ M.image P.label,
+      ∑ ω ∈ M.filter (fun ω' => P.label ω' = l),
+        (if ω ∈ E then μ ω else 0) =
+      p * ∑ ω ∈ M.filter (fun ω' => P.label ω' = l),
+        μ ω := by
+    intro l hl
+    obtain ⟨ω₀, hω₀M, hω₀l⟩ :
+        ∃ ω₀ ∈ M, P.label ω₀ = l := by aesop
+    have hfilt :
+        M.filter (fun ω' => P.label ω' = l) =
+          P.cell ω₀ := by
+      ext ω; aesop
+    rw [hfilt]
+    exact ((posterior_eq_iff_sum μ P E ω₀ p
+      (hcell_pos ω₀ hω₀M)).mp (hp ω₀ hω₀M))
+  rw [h_lhs]
+  rw [show ∑ l ∈ M.image P.label,
+      ∑ ω ∈ M.filter (fun ω' => P.label ω' = l),
+        (if ω ∈ E then μ ω else 0) =
+    ∑ l ∈ M.image P.label,
+      (p * ∑ ω ∈ M.filter (fun ω' => P.label ω' = l),
+        μ ω)
+    from Finset.sum_congr rfl h_fiber]
+  rw [← Finset.mul_sum]
+  congr 1
+  rw [Finset.sum_image']
+  aesop
+
+-- ============================================================================
+-- § 5. Aumann's Agreement Theorem
+-- ============================================================================
+
+/-- **Aumann's Agreement Theorem.**
+
+If two Bayesian agents share a common prior `μ` over a finite state
+space `Ω`, and it is common knowledge (modeled by a set `M` that is a
+union of both `P₁`-cells and `P₂`-cells, i.e., a cell of the meet
+partition) that:
+- Agent 1's posterior for event `E` is `p`, and
+- Agent 2's posterior for event `E` is `q`,
+
+then `p = q`.
+
+The proof shows that both `p` and `q` equal the ratio
+`∑_{ω ∈ M ∩ E} μ(ω) / ∑_{ω ∈ M} μ(ω)`.
+
+**Critical hidden assumption**: the prior `μ` is *shared* between both
+agents. This is the "common priors" assumption that HPMOR never
+mentions. Without it, the theorem fails — see
+`no_agreement_without_common_priors` below. -/
+theorem aumann_agreement
+    (μ : Ω → ℝ) (hμ : ∀ ω, 0 ≤ μ ω)
+    (P₁ P₂ : InfoPartition Ω) (E : Finset Ω)
+    (M : Finset Ω) (hM_pos : 0 < ∑ ω ∈ M, μ ω)
+    (hM1 : IsUnionOfCells P₁ M)
+    (hM2 : IsUnionOfCells P₂ M)
+    (p q : ℝ)
+    (hp : ∀ ω ∈ M, posterior μ P₁ E ω = p)
+    (hq : ∀ ω ∈ M, posterior μ P₂ E ω = q)
+    (hcell1_pos : ∀ ω ∈ M,
+      0 < ∑ ω' ∈ P₁.cell ω, μ ω')
+    (hcell2_pos : ∀ ω ∈ M,
+      0 < ∑ ω' ∈ P₂.cell ω, μ ω') :
+    p = q := by
+  have h1 :=
+    posterior_const_sum μ hμ P₁ E M hM1 p hp hcell1_pos
+  have h2 :=
+    posterior_const_sum μ hμ P₂ E M hM2 q hq hcell2_pos
+  have hne : (∑ ω ∈ M, μ ω) ≠ 0 := ne_of_gt hM_pos
+  linarith [mul_right_cancel₀ hne (h1.symm.trans h2)]
+
+end Aumann
+
+-- ============================================================================
+-- § 6. Why Common Priors Matter: Counterexample
+-- ============================================================================
+
+/-- **Counterexample: Disagreement without common priors.**
+
+With two states {0, 1}:
+- Agent 1 has prior (3/4, 1/4)
+- Agent 2 has prior (1/4, 3/4)
+- Even with trivial partitions (full common knowledge), their
+  "posteriors" for E = {0} differ: 3/4 vs 1/4.
+
+This demonstrates the common prior assumption is *necessary* for
+Aumann's theorem. HPMOR's treatment of rational disagreement
+implicitly assumes common priors without stating this. In practice,
+Harry (Muggle-science priors) and Draco (pureblood-ideology priors)
+have *very different* priors, so Aumann's theorem does not directly
+apply to their negotiations. -/
 theorem no_agreement_without_common_priors :
     ∃ (μ₁ μ₂ : Fin 2 → ℝ),
       (∀ i, 0 < μ₁ i) ∧ (∀ i, 0 < μ₂ i) ∧
       (∑ i, μ₁ i = 1) ∧ (∑ i, μ₂ i = 1) ∧
-      -- Even with trivial (full-information) partitions, posteriors differ
       μ₁ 0 ≠ μ₂ 0 := by
-  refine ⟨![0.9, 0.1], ![0.1, 0.9], ?_, ?_, ?_, ?_, ?_⟩
-  · intro i; fin_cases i <;> simp [Matrix.cons_val_zero, Matrix.cons_val_one] <;> norm_num
-  · intro i; fin_cases i <;> simp [Matrix.cons_val_zero, Matrix.cons_val_one] <;> norm_num
-  · simp [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]; norm_num
-  · simp [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]; norm_num
-  · simp [Matrix.cons_val_zero]; norm_num
-
--- ============================================================================
--- § 5. Connection to HPMOR
--- ============================================================================
+  refine ⟨![3/4, 1/4], ![1/4, 3/4], ?_, ?_, ?_, ?_, ?_⟩
+  · intro i
+    fin_cases i <;>
+      simp [Matrix.cons_val_zero, Matrix.cons_val_one]
+  · intro i
+    fin_cases i <;>
+      simp [Matrix.cons_val_zero, Matrix.cons_val_one]
+  · simp [Fin.sum_univ_two, Matrix.cons_val_zero,
+      Matrix.cons_val_one]
+    ring
+  · simp [Fin.sum_univ_two, Matrix.cons_val_zero,
+      Matrix.cons_val_one]
+    ring
+  · simp [Matrix.cons_val_zero]
+    norm_num
 
 /-!
 ## HPMOR Connection (Chapters 22-24)
 
-In HPMOR Ch. 22-24, Harry and Draco engage in negotiations where both are
-(approximately) Bayesian reasoners. The narrative implies that if they could
-fully share their evidence and reasoning, they should converge to agreement.
+In HPMOR Ch. 22-24, Harry and Draco engage in negotiations where both
+are (approximately) Bayesian reasoners. The narrative implies that if
+they could fully share their evidence and reasoning, they should
+converge to agreement.
 
 Aumann's Agreement Theorem provides the theoretical backing for this:
-**if** they share common priors (same background assumptions about the world)
-**and** their posteriors are common knowledge (each knows what the other
-believes, knows that the other knows, etc.), **then** they must agree.
+**if** they share common priors (same background assumptions about the
+world) **and** their posteriors are common knowledge (each knows what
+the other believes, knows that the other knows, etc.), **then** they
+must agree.
 
-### The Hidden Assumption
+### The Hidden Assumption (Tier 3 Finding)
 
 The critical insight from formalization is that HPMOR never explicitly
 discusses the **common priors** assumption. In practice:
@@ -209,23 +349,10 @@ discusses the **common priors** assumption. In practice:
 
 Aumann's theorem does NOT apply when priors differ! The formalization
 makes this crystal clear: the variable `μ` (the prior) appears as a
-*single* shared parameter. There is no version of the theorem with
-two different priors μ₁ and μ₂.
+*single* shared parameter in `aumann_agreement`. There is no version
+of the theorem with two different priors `μ₁` and `μ₂`.
 
-This is exactly the kind of hidden assumption that formalization reveals:
-- The English statement "rational agents cannot agree to disagree" sounds universal
-- The formal statement requires `μ : Ω → ℝ` to be shared
-- HPMOR's treatment assumes this without discussion
-
-### The Counterexample
-
-We also prove `no_agreement_without_common_priors`, showing that with
-different priors, even full mutual knowledge of beliefs doesn't force
-agreement. Two agents can look at the same evidence and rationally reach
-different conclusions if they started from different priors.
-
-This has philosophical implications that HPMOR touches on but doesn't
-fully explore: the question of *where priors come from* and whether
-there is a "rational" prior is one of the deepest questions in
-Bayesian epistemology.
+The English statement "rational agents cannot agree to disagree"
+sounds universal. The formal statement requires `μ : Ω → ℝ` to be
+shared. HPMOR's treatment assumes this without discussion.
 -/
