@@ -1,35 +1,39 @@
 # GameTheory
 
-HPMOR Chapters: 22-24, 33, 113-122
+HPMOR Chapters: 7, 19, 22-24, 33, 60, 109, 113-122
 
 ## Goal
 
 Formalize the game-theoretic reasoning that drives HPMOR's negotiations,
-confrontations, and strategic arguments. The key questions: Can rational
-agents always converge? When does iteration change the equilibrium? Was
-Harry's final strategy actually optimal?
+confrontations, and strategic arguments. Determine whether the informal
+arguments hold as stated or require hidden assumptions.
 
 ## What's here
 
-| File | What it does | Tier |
-|------|-------------|------|
-| Aumann.lean | Aumann's agreement theorem with counterexample. Proves common priors are necessary — and Harry and Draco don't share them. | 3 |
-| IteratedPD.lean | Folk theorem with exact discount factor threshold. Proves the threshold is independent of the sucker payoff. | 3 |
-| FinalExam.lean | Harry vs Voldemort as ultimatum game. Proves Harry's exploit is optimal above a 55% success threshold. | 3 |
-| Basic.lean | Nash equilibrium definitions, bargaining problem structure. | 1-2 |
+| File | What it does | Tier | Finding |
+|------|-------------|------|---------|
+| Aumann.lean | Aumann's agreement theorem with counterexample. Common priors are necessary. | 2 | #7 |
+| IteratedPD.lean | Folk theorem with exact discount factor threshold. Threshold independent of sucker payoff. | 3 | #5 |
+| FinalExam.lean | Harry vs Voldemort as ultimatum game. Exploit optimal above 55% threshold. | 2 | #4 |
+| HawkDove.lean | Hawk-Dove with reputation. Reputation makes system twice as fragile. Phase transition at R=(C-V)/2. | 3 | #16 |
+| SignalAmbiguity.lean | Strategic ambiguity with heterogeneous audiences. Targeted signaling beats both clarity and ambiguity. | 3 | #18 |
+| MirrorOfErised.lean | Mirror as preference revelation mechanism. Tests alignment, not character. Gameable by misaligned agents. | 3 | #20 |
+| Basic.lean | Nash equilibrium definitions, bargaining. | 1-2 | — |
 
 ## Findings so far
 
-- **Aumann requires common priors**: HPMOR implies rational Bayesians must converge, but never mentions common priors. Harry (Muggle science) and Draco (pureblood ideology) have different priors, so Aumann literally does not apply to their negotiations.
-- **Cooperation threshold ignores sucker payoff**: The folk theorem threshold `(T-R)/(T-P)` doesn't involve S. This is genuinely non-obvious and Harry could have said it.
-- **Harry's exploit was optimal, not just sufficient**: The success probability threshold of ~55% is surprisingly low. Harry didn't need near-certainty.
+- **#4 Final exam** (Weak): The 55% threshold is a modeling artifact — depends on arbitrary payoffs.
+- **#5 Iterated PD** (Novel): Cooperation threshold `(T-R)/(T-P)` is independent of sucker payoff S.
+- **#7 Aumann** (Weak): Common priors requirement is a textbook result, not a discovery.
+- **#16 Hawk-Dove** (Novel): Reputation makes the mixed ESS twice as fragile (threshold at (C-V)/2 not (C-V)).
+- **#18 Signal ambiguity** (Novel): Targeted signaling (allies learn everything, opponents nothing) dominates both clarity and full ambiguity.
+- **#20 Mirror of Erised** (Novel): The Mirror tests preference alignment (meta-prefs = object-prefs), not character.
 
 ## What's next
 
 | Claim | Prediction | Uncertainty |
 |-------|-----------|-------------|
-| Mixed-strategy NE existence via Brouwer (Ch. 33) | Probably confirms — well-established math, question is whether Brouwer is in Mathlib | Low |
-| Shapley values for Harry/Draco/Hermione coalition (Ch. 33) | Uncertain — the interesting question is whether the coalition is stable or whether one player has a profitable deviation | Medium-high |
-| Final exam as signaling game with incomplete information | Genuinely uncertain — does Harry's concealment of partial transfiguration change the equilibrium analysis? | High — good target |
-| Recursive strategic reasoning depth bound (Ch. 24) | Uncertain — is there a formal limit to "I know that you know that I know"? | High |
-| Unbreakable Vow as binding commitment device (Ch. 113, 122) | Probably confirms — mechanism design is well-understood — but the "unbreakable" part may interact with the precommitment findings in interesting ways | Medium |
+| Quidditch Snitch as dominant strategy collapse (Ch. 7) | Probably confirms — the dominance boundary is non-obvious | Medium-high |
+| Escalation dynamics in sequential games (Ch. 19, 74) | Probably confirms standard results | Medium |
+| Unbreakable Vow as commitment device (Ch. 113, 122) | Probably confirms but interaction with finding #2 could be novel | Medium |
+| Dynamic signaling — do opponents learn to decode ambiguity? (extends #18) | Genuinely uncertain | High |
