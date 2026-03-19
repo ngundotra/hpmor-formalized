@@ -17,7 +17,7 @@
 | 6 | Hawk-Dove model of dominance contests | 19 | Evolutionary Game Theory | Medium | High | No |
 | 7 | Constrained optimization with binding constraints | 56 | Optimization Theory | Medium | High | No |
 | 8 | Taboo tradeoffs / value consistency | 82 | Decision Theory / Welfare Economics | Hard | Very High | No |
-| 9 | Time-Turner as NP oracle | 17 | Computational Complexity | Hard | Very High | No |
+| 9 | Time-Turner as NP oracle | 17 | Computational Complexity | Hard | Very High | Yes |
 | 10 | Contagious lies as dependency graph | 65 | Graph Theory / Information Theory | Medium | High | No |
 | 11 | Secret propagation in networks | 48 | Graph Theory / Probability | Medium | High | No |
 | 12 | Fundamental attribution error as conditional probability | 5 | Bayesian Reasoning | Easy | Medium | No |
@@ -51,6 +51,7 @@
 - Iterated PD folk theorem (Ch. 33) -- `HpmorFormalized/GameTheory/IteratedPD.lean`
 - Final exam game theory (Ch. 113-122) -- `HpmorFormalized/GameTheory/FinalExam.lean`
 - CausalDAG / topological ordering -- `HpmorFormalized/TimeTravel/CausalDAG.lean`
+- Time-Turner as NP oracle (Ch. 17) -- `HpmorFormalized/TimeTravel/NPOracle.lean`
 
 ---
 

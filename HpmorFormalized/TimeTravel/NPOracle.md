@@ -1,0 +1,13 @@
+In HPMOR Chapter 17, Harry wonders whether a Time-Turner could solve NP-complete problems. The idea: receive a candidate solution from the future, verify it (which is fast for NP problems), and send it back only if it checks out. Self-consistency forces the loop to stabilize, and if a valid solution exists, the loop "must" contain it. This would let you solve NP problems in polynomial time using a time machine.
+
+We formalized this argument and found it has a fatal flaw: the multiple fixed-point problem.
+
+The transition function works as follows: if you receive a valid solution, send it back (self-consistent loop). If you receive an invalid candidate, send nothing. If you receive nothing, send nothing. We proved a complete characterization of the fixed points: a state is a fixed point if and only if it is either `none` (nothing sent) or `some s` where `s` passes verification.
+
+The critical observation is that `none` is ALWAYS a fixed point, regardless of whether a solution exists. You receive nothing from the future, you send nothing back -- perfectly self-consistent, zero information gained. When a valid solution exists, `some s` is ALSO a fixed point. So there are at least two fixed points, and the Novikov self-consistency principle (which we formalized in Novikov.lean) only guarantees that SOME consistent loop exists -- it says nothing about which one the universe picks.
+
+We proved this formally: both a "trivial selector" (picks `none`) and a "solution selector" (picks `some s`) satisfy the self-consistency constraint equally well. Any predicate that holds uniformly for all valid fixed-point selections cannot distinguish them. To use the Time-Turner as an NP oracle, you would need an additional physical principle that biases the universe toward the "interesting" fixed point -- and no such principle exists in known physics or in HPMOR's rules.
+
+There is one genuinely correct aspect of the scheme: if the problem has NO valid solution, then `none` is the UNIQUE fixed point (we proved this too). Invalid solutions cannot persist in the loop because they fail verification and get mapped to `none`. So the oracle correctly returns "no solution" for unsolvable instances -- but vacuously, since it always returns "no solution" regardless.
+
+This is a Tier 3 finding. The informal argument in HPMOR conflates "a consistent loop exists" with "the consistent loop solves the problem." Formalization reveals the gap: self-consistency is necessary but not sufficient for computational usefulness. The Novikov principle guarantees existence of consistent histories, but the trivial do-nothing history is always among them, and nothing in the physics selects against it.
