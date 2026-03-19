@@ -5,6 +5,7 @@ import HpmorFormalized.TimeTravel.CausalDAG
 import HpmorFormalized.TimeTravel.Paradox
 import HpmorFormalized.TimeTravel.NPOracle
 import HpmorFormalized.Bayes.Basic
+import HpmorFormalized.Bayes.ConfirmationBias
 import HpmorFormalized.Bayes.HypothesisLocation
 import HpmorFormalized.DecisionTheory.Basic
 import HpmorFormalized.DecisionTheory.ExistentialRisk
@@ -15,5 +16,6 @@ import HpmorFormalized.GameTheory.Basic
 import HpmorFormalized.GameTheory.FinalExam
 import HpmorFormalized.GameTheory.Aumann
 import HpmorFormalized.GameTheory.IteratedPD
+import HpmorFormalized.GameTheory.HawkDove
 import HpmorFormalized.Physics.Conservation
 import HpmorFormalized.Logic.Occlumency
