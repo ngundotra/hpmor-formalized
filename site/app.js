@@ -1,5 +1,6 @@
 const response = await fetch("./data/findings.json");
 const data = await response.json();
+const repoBaseUrl = data.meta.repoBaseUrl;
 
 const verdictClass = {
   Solid: "badge-solid",
@@ -7,10 +8,18 @@ const verdictClass = {
   Illustrative: "badge-illustrative",
 };
 
+const statusClass = {
+  proved: "status-proved",
+  qualified: "status-qualified",
+  example: "status-example",
+  frontier: "status-frontier",
+};
+
 document.querySelector("#source-note").textContent =
   `Source of truth: ${data.meta.sourceOfTruth}`;
 document.querySelector("#sync-note").textContent = data.meta.syncPolicy;
 
+renderFeaturedFindings(data.meta.featuredFindings);
 renderDashboard(data);
 renderSummary(data);
 renderWhyItMatters(data.meta.whyItMatters);
@@ -71,6 +80,45 @@ function renderDashboard(siteData) {
           <p class="section-kicker">${escapeHtml(stat.label)}</p>
           <span class="value">${escapeHtml(stat.value)}</span>
           <p>${escapeHtml(stat.blurb)}</p>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderFeaturedFindings(items) {
+  const container = document.querySelector("#featured-findings");
+  container.innerHTML = items
+    .map(
+      (item) => `
+        <article class="featured-card">
+          <div class="card-top">
+            <div>
+              <p class="section-kicker">${escapeHtml(item.module)}</p>
+              <h3>${escapeHtml(item.title)}</h3>
+            </div>
+            <span class="status-badge ${statusClass[item.badgeStyle] || ""}">
+              ${escapeHtml(item.badge)}
+            </span>
+          </div>
+          <p>${escapeHtml(item.summary)}</p>
+          <div class="card-block">
+            <h4>Why it matters</h4>
+            <p>${escapeHtml(item.whyItMatters)}</p>
+          </div>
+          <div class="link-list">
+            <a class="proof-link" href="${escapeHtml(githubBlob(item.modulePath, item.moduleLine))}" target="_blank" rel="noreferrer">Module</a>
+            ${item.theoremLinks
+              .map(
+                (link) =>
+                  `<a class="proof-link" href="${escapeHtml(githubBlob(item.modulePath, link.line))}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>`
+              )
+              .join("")}
+          </div>
+          <details class="viewer">
+            <summary>View Lean excerpt</summary>
+            <pre><code>${escapeHtml(item.leanSnippet)}</code></pre>
+          </details>
         </article>
       `
     )
@@ -160,11 +208,19 @@ function renderCaseFiles(caseFiles) {
             <span class="tag">${escapeHtml(item.currentTier)}</span>
             <span class="tag">${escapeHtml(item.signal)}</span>
             <span class="tag">${escapeHtml(item.status)}</span>
+            <span class="status-badge ${statusClass[item.badgeStyle] || ""}">
+              ${escapeHtml(item.badge)}
+            </span>
           </div>
 
           <div class="provenance">
-            <div class="provenance-row"><strong>Lean module:</strong> <code>${escapeHtml(item.modulePath)}</code></div>
-            <div class="provenance-row"><strong>Theorem anchors:</strong> ${escapeHtml(item.theoremAnchors.join(", "))}</div>
+            <div class="provenance-row"><strong>Lean module:</strong> <a href="${escapeHtml(githubBlob(item.modulePath, item.moduleLine || 1))}" target="_blank" rel="noreferrer"><code>${escapeHtml(item.modulePath)}</code></a></div>
+            <div class="provenance-row"><strong>Theorem anchors:</strong> ${item.theoremLinks
+              .map(
+                (link) =>
+                  `<a href="${escapeHtml(githubBlob(item.modulePath, link.line))}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>`
+              )
+              .join(", ")}</div>
             <div class="provenance-row"><strong>Proof status:</strong> ${escapeHtml(item.proofStatus)}</div>
             <div class="provenance-row"><strong>Reading:</strong> ${escapeHtml(item.readingMode)}</div>
           </div>
@@ -255,6 +311,10 @@ function renderTools(tools) {
       `
     )
     .join("");
+}
+
+function githubBlob(path, line = 1) {
+  return `${repoBaseUrl}${path}#L${line}`;
 }
 
 function countBy(items, key) {

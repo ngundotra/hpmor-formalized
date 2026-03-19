@@ -1,6 +1,7 @@
 {
   "meta": {
     "title": "HPMOR Findings Map",
+    "repoBaseUrl": "https://github.com/ngundotra/hpmor-formalized/blob/main/",
     "sourceOfTruth": "ROADMAP.md",
     "syncPolicy": "This site mirrors ROADMAP.md by hand. If they disagree, ROADMAP.md wins.",
     "repoStats": {
@@ -51,6 +52,53 @@
         "whyItMatters": "The time-travel story is most credible when the site distinguishes general results from model-dependent constraints."
       }
     ],
+    "featuredFindings": [
+      {
+        "module": "DecisionTheory / ExistentialRisk",
+        "title": "Standard expected utility self-destructs under existential risk",
+        "badge": "proved",
+        "badgeStyle": "proved",
+        "modulePath": "HpmorFormalized/DecisionTheory/ExistentialRisk.lean",
+        "moduleLine": 1,
+        "theoremLinks": [
+          { "label": "eu_indiscriminate", "line": 98 },
+          { "label": "lexicographic_discriminates", "line": 134 }
+        ],
+        "summary": "Harry's stated expected-utility reasoning gives the right emotional emphasis but the wrong formal framework: if every action carries some chance of annihilation, standard EU collapses and cannot discriminate between them.",
+        "whyItMatters": "This is the cleanest example of formalization changing the theory rather than merely polishing it. The natural fix looks lexicographic, not ordinary expected utility.",
+        "leanSnippet": "theorem eu_indiscriminate\\n    {p₁ p₂ : ℝ} (hp₁ : 0 < p₁) (hp₁' : p₁ < 1) (hp₂ : 0 < p₂) (hp₂' : p₂ < 1)\\n    (u₁ u₂ : EReal) :\\n    binary_eu p₁ u₁ ⊥ = binary_eu p₂ u₂ ⊥ := by\\n  rw [eu_bot_of_pos_prob hp₁ hp₁', eu_bot_of_pos_prob hp₂ hp₂']\\n\\ntheorem lexicographic_discriminates\\n    (a b : LexAction) (h : a.survivalProb < b.survivalProb) :\\n    a.lexLe b ∧ ¬ b.lexLe a := by\\n  constructor\\n  · left; exact h\\n  · intro hba\\n    cases hba with\\n    | inl hlt => linarith\\n    | inr heq => linarith [heq.1]"
+      },
+      {
+        "module": "DecisionTheory / TDT",
+        "title": "TDT survives neither deflation nor coronation; it survives as an underdetermined intermediate theory",
+        "badge": "proved",
+        "badgeStyle": "proved",
+        "modulePath": "HpmorFormalized/DecisionTheory/TDT.lean",
+        "moduleLine": 1,
+        "theoremLinks": [
+          { "label": "logical_counterfactual_underdetermined", "line": 457 },
+          { "label": "tdt_neq_edt_smoking_lesion", "line": 622 }
+        ],
+        "summary": "Formalization does not let TDT remain a vague aura of superiority. It shows both that TDT needs extra structure to define logical counterfactuals and that it still differs from EDT in the smoking lesion.",
+        "whyItMatters": "For EA/LW readers this is high-value because it upgrades the conversation from rhetoric about 'choosing the output of the algorithm' to an actual question about what extra machinery the theory requires.",
+        "leanSnippet": "theorem logical_counterfactual_underdetermined\\n    {Action State : Type}\\n    (actual : Action) (other : Action) (_h : actual ≠ other)\\n    (trueProb : State → ℝ)\\n    (lcf₁ lcf₂ : LogicalCounterfactual Action State)\\n    (h₁ : lcf₁ actual actual = trueProb)\\n    (h₂ : lcf₂ actual actual = trueProb)\\n    (hdiff : lcf₁ actual other ≠ lcf₂ actual other) :\\n    lcf₁ actual actual = lcf₂ actual actual ∧\\n    lcf₁ actual other ≠ lcf₂ actual other := by\\n  exact ⟨by rw [h₁, h₂], hdiff⟩\\n\\ntheorem tdt_neq_edt_smoking_lesion :\\n    tdtExpectedUtility (smokingLesionProblem 10 100) (smokingTDTProb 0.5)\\n      smoke healthStates ≠\\n    edtExpectedUtility (smokingLesionProblem 10 100) (smokingEDTProb 0.9 0.1)\\n      smoke healthStates := by\\n  simp only [tdtExpectedUtility, edtExpectedUtility, smokingLesionProblem,\\n    smokingTDTProb, smokingEDTProb, healthStates,\\n    List.map, List.sum_cons, List.sum_nil]\\n  norm_num"
+      },
+      {
+        "module": "DecisionTheory / TabooTradeoffs",
+        "title": "Sacred values are not irrational in general; they are only squeezed out on finite choice sets",
+        "badge": "qualified",
+        "badgeStyle": "qualified",
+        "modulePath": "HpmorFormalized/DecisionTheory/TabooTradeoffs.lean",
+        "moduleLine": 1,
+        "theoremLinks": [
+          { "label": "lex_no_money_pump", "line": 274 },
+          { "label": "finite_tradeoff_exists", "line": 349 }
+        ],
+        "summary": "Harry's anti-taboo-tradeoff line works on finite menus, but not in full generality. Lexicographic preferences can be rational and money-pump safe while refusing ordinary tradeoffs.",
+        "whyItMatters": "This is the sort of correction a rationalist audience should want: the original argument remains useful in practical bounded settings, but not as a universal philosophical law.",
+        "leanSnippet": "theorem lex_rational : lexPref.isRational :=\\n  ⟨lex_complete, lex_transitive⟩\\n\\ntheorem lex_no_money_pump : ¬ hasMoneyPumpCycle lexPref :=\\n  rational_no_money_pump lexPref lex_rational\\n\\ntheorem finite_tradeoff_exists [Fintype α] [DecidableEq α]\\n    (r : PreferenceRelation α)\\n    (hdec : ∀ x y, Decidable (r.pref x y))\\n    (hr : r.isRational)\\n    (x y : α) (hxy : r.strictPref x y) :\\n    ∃ u : α → ℝ, u x > u y := by\\n  let filt : α → Finset α := fun a => @Finset.filter _ (fun z => r.pref a z) (hdec a) Finset.univ\\n  let u : α → ℝ := fun a => (filt a).card\\n  use u"
+      }
+    ],
     "legend": [
       {
         "label": "Solid",
@@ -78,10 +126,17 @@
       "currentTier": "Tier 2",
       "signal": "Strongest work in the repo",
       "status": "Proven, with real mathematical content",
+      "badge": "proved",
+      "badgeStyle": "proved",
       "modulePath": "HpmorFormalized/TimeTravel/Novikov.lean",
+      "moduleLine": 1,
       "theoremAnchors": [
         "novikov_periodic_consistency",
         "time_turner_consistency"
+      ],
+      "theoremLinks": [
+        { "label": "novikov_periodic_consistency", "line": 89 },
+        { "label": "time_turner_consistency", "line": 187 }
       ],
       "proofStatus": "General finite-state theorem; fully proven",
       "readingMode": "Faithful theorem",
@@ -98,19 +153,26 @@
       "module": "TimeTravel / DAG model",
       "title": "Drawing arrows from past to future is not the same as earning a causal theorem",
       "verdict": "Qualified",
-      "currentTier": "Tier 1",
-      "signal": "Useful but too polite",
-      "status": "Partly faithful, structurally weak",
+      "currentTier": "Tier 2-3",
+      "signal": "Real theorem plus real caveat",
+      "status": "Rebuilt with general acyclicity and topological ordering",
+      "badge": "qualified",
+      "badgeStyle": "qualified",
       "modulePath": "HpmorFormalized/TimeTravel/CausalDAG.lean",
+      "moduleLine": 1,
       "theoremAnchors": [
         "CausalDAG.topological_order_exists",
         "CausalDAG.consistent_history_exists_forest"
       ],
-      "proofStatus": "Substantive but model-sensitive; hidden assumptions surfaced",
+      "theoremLinks": [
+        { "label": "CausalDAG.topological_order_exists", "line": 157 },
+        { "label": "CausalDAG.consistent_history_exists_forest", "line": 210 }
+      ],
+      "proofStatus": "General relation-based acyclicity and topological ordering proven; consistent histories currently best for forests",
       "readingMode": "Qualified structural theorem",
       "hpmorClaim": "Acyclic causal structure should guarantee paradox-free histories.",
-      "whatSurvived": "The basic intuition survives: causal loops are bad, topological structure matters, and consistency arguments should proceed in causal order rather than by wishful thinking.",
-      "whatRealityObjectedTo": "The old DAG setup smuggles in acyclicity through the indexing scheme, which means several theorems are true for reasons too cheap to be interesting. The linear-history result is also narrower than the prose would like.",
+      "whatSurvived": "The stronger version now survives: acyclicity is handled via general relation-based machinery, topological ordering is genuinely proved, and the model says something structural rather than merely index-theoretic.",
+      "whatRealityObjectedTo": "The remaining objection is narrower and more interesting: consistent history propagation is straightforward on forests, but merged causal chains need an explicit merge principle the story never states.",
       "nextPressurePoints": [
         "Model acyclicity via transitive closure instead of the index order",
         "Prove topological ordering exists in the genuinely non-trivial setting",
@@ -119,21 +181,28 @@
     },
     {
       "module": "TimeTravel / Paradox",
-      "title": "The universe may cheat to avoid paradox, but our proof currently does so first",
-      "verdict": "Illustrative",
-      "currentTier": "Tier 1",
-      "signal": "Good demo, not yet a theorem of substance",
-      "status": "Hardcoded toy model",
+      "title": "The paradox story now cashes out as general fixed-point machinery",
+      "verdict": "Qualified",
+      "currentTier": "Tier 2",
+      "signal": "Generalized beyond the original toy setup",
+      "status": "General fixed-point theorems with HPMOR illustration preserved",
+      "badge": "proved",
+      "badgeStyle": "proved",
       "modulePath": "HpmorFormalized/TimeTravel/Paradox.lean",
+      "moduleLine": 1,
       "theoremAnchors": [
         "novikov_resolves_iterated_paradox",
         "hpmor_unique_fixpoint"
       ],
-      "proofStatus": "Generalized fixed-point machinery with HPMOR illustration preserved",
-      "readingMode": "Faithful theorem plus example",
+      "theoremLinks": [
+        { "label": "novikov_resolves_iterated_paradox", "line": 249 },
+        { "label": "hpmor_unique_fixpoint", "line": 305 }
+      ],
+      "proofStatus": "General fixed-point theorems over arbitrary finite types; example retained at the bottom",
+      "readingMode": "Faithful theorem plus illustration",
       "hpmorClaim": "The universe resolves paradoxes by selecting a self-consistent outcome outside the agent's intended options.",
-      "whatSurvived": "The toy fixed-point story is clear, readable, and machine-checked. It does demonstrate the shape of the intended resolution.",
-      "whatRealityObjectedTo": "Unfortunately, every theorem depends on a handcrafted three-state enum. At present the model illustrates the argument rather than forcing nature to admit the general phenomenon.",
+      "whatSurvived": "The core paradox-resolution story now survives in a much less embarrassing form: the fixed-point results are stated over arbitrary finite types, not just one hand-built enum.",
+      "whatRealityObjectedTo": "What still remains open is selection, not existence. Self-consistency may force some fixed point, but not necessarily the one a protagonist would find maximally informative.",
       "nextPressurePoints": [
         "Generalize from a fixed enum to arbitrary finite transition systems",
         "Characterize when fixed points exist and when they are unique",
@@ -144,15 +213,22 @@
       "module": "Bayes",
       "title": "Bayes survives contact with Lean, which is more than can be said for many speeches",
       "verdict": "Qualified",
-      "currentTier": "Tier 1-2",
-      "signal": "Core claim nearly complete",
-      "status": "Definitions and substantive theorem direction in place",
+      "currentTier": "Tier 2-3",
+      "signal": "Core theorem family complete",
+      "status": "All 8 theorems proven",
+      "badge": "proved",
+      "badgeStyle": "proved",
       "modulePath": "HpmorFormalized/Bayes/Basic.lean",
+      "moduleLine": 1,
       "theoremAnchors": [
         "posterior_tendsto_one",
         "posterior_monotone_in_L"
       ],
-      "proofStatus": "Core theorem family proven; quantitative sharpening remains open",
+      "theoremLinks": [
+        { "label": "posterior_tendsto_one", "line": 111 },
+        { "label": "posterior_monotone_in_L", "line": 140 }
+      ],
+      "proofStatus": "Posterior convergence and monotonicity theorem family fully proven",
       "readingMode": "Faithful theorem",
       "hpmorClaim": "Even an astronomically tiny prior can be overwhelmed by sufficiently strong evidence.",
       "whatSurvived": "The central update story survives cleanly. Evidence can, in fact, crush prior skepticism, and Lean has been kind enough not to object.",
@@ -165,21 +241,28 @@
     },
     {
       "module": "DecisionTheory",
-      "title": "The prisoner’s dilemma results are correct in the technically unsatisfying way",
-      "verdict": "Illustrative",
-      "currentTier": "Tier 1",
-      "signal": "Stub with honest intent",
-      "status": "Trivial consequences of payoff inequalities",
+      "title": "Precommitment helps, but only under sharper structural conditions than the story admits",
+      "verdict": "Qualified",
+      "currentTier": "Tier 2-3",
+      "signal": "Now substantive enough to bite back",
+      "status": "Stackelberg, precommitment, and existential-risk results all landed",
+      "badge": "qualified",
+      "badgeStyle": "qualified",
       "modulePath": "HpmorFormalized/DecisionTheory/Basic.lean",
+      "moduleLine": 1,
       "theoremAnchors": [
         "precommitment_strictly_helps",
         "strict_improvement_requires_incredibility"
       ],
-      "proofStatus": "Now stronger than a stub, but uneven in depth across subclaims",
-      "readingMode": "Qualified theorem family",
+      "theoremLinks": [
+        { "label": "precommitment_strictly_helps", "line": 120 },
+        { "label": "strict_improvement_requires_incredibility", "line": 193 }
+      ],
+      "proofStatus": "General strategic theorems proven; deeper equilibrium refinements still open",
+      "readingMode": "Qualified theorem family with Tier-3 offshoots",
       "hpmorClaim": "Precommitment and strategic foresight can change what rational action looks like.",
-      "whatSurvived": "The basic payoff facts are fine. Defection dominates in the vanilla game, and mutual cooperation is better than mutual defection whenever the reward ordering says it is.",
-      "whatRealityObjectedTo": "This is still mostly bookkeeping. The current results do not yet explain equilibrium selection, credible threats, or the actual mechanism by which precommitment changes the game rather than merely sounding impressive.",
+      "whatSurvived": "The stronger strategic story now survives: leader advantage, precommitment value, and the existential-risk failure mode of standard expected utility are all formalized rather than merely announced.",
+      "whatRealityObjectedTo": "The pressure point is no longer whether precommitment matters, but exactly when it helps. The latest roadmap finding is that its value can depend on equilibrium uniqueness in a way the informal argument omits.",
       "nextPressurePoints": [
         "Formalize iterated prisoner's dilemma with discount factors",
         "Prove subgame-perfect equilibrium results rather than rhetoric about credibility",
@@ -188,21 +271,28 @@
     },
     {
       "module": "GameTheory",
-      "title": "Game theory is where arguments go to discover what they forgot to assume",
-      "verdict": "Qualified",
-      "currentTier": "Tier 1",
-      "signal": "Highest surprise potential",
-      "status": "Mixed: mostly early, but strategically promising",
+      "title": "Game theory remains the best machine in the repo for extracting hidden assumptions",
+      "verdict": "Solid",
+      "currentTier": "Tier 3",
+      "signal": "Richest cluster of high-value findings",
+      "status": "Aumann, Iterated PD, and FinalExam results all landed",
+      "badge": "proved",
+      "badgeStyle": "proved",
       "modulePath": "HpmorFormalized/GameTheory/Aumann.lean",
+      "moduleLine": 1,
       "theoremAnchors": [
         "aumann_agreement",
         "no_agreement_without_common_priors"
       ],
-      "proofStatus": "Tier-3 style result with explicit counterexample",
-      "readingMode": "Faithful theorem plus assumption audit",
+      "theoremLinks": [
+        { "label": "aumann_agreement", "line": 265 },
+        { "label": "no_agreement_without_common_priors", "line": 306 }
+      ],
+      "proofStatus": "Tier-3 style result cluster with explicit counterexamples and threshold theorems",
+      "readingMode": "Faithful theorem family plus assumption audit",
       "hpmorClaim": "Rational agents negotiating under common knowledge and strategic pressure should converge or behave predictably.",
-      "whatSurvived": "Even before the newer proofs landed, this was already the most promising hunting ground for hidden assumptions. It remains the place where formalization is most likely to extract a confession.",
-      "whatRealityObjectedTo": "Game-theoretic prose is unusually prone to contraband: common priors, credibility assumptions, equilibrium concepts, and other premises the story often treats as if they came free with the English language.",
+      "whatSurvived": "This is now the clearest example of the site's thesis. Agreement theorems, repeated games, and strategic confrontation all produce precise results once the assumptions are forced into the open.",
+      "whatRealityObjectedTo": "The objections are now precise rather than speculative: common priors are not optional, threshold behavior matters, and strategic prose is still unusually vulnerable to sneaking in the wrong equilibrium concept.",
       "nextPressurePoints": [
         "Aumann-style agreement results and their assumptions",
         "Shapley or coalition analysis for the Harry-Draco-Hermione setting",
