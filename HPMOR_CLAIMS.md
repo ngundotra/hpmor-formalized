@@ -1,57 +1,75 @@
 # HPMOR Formalizable Claims: Comprehensive Extraction
 
 > Extracted from all 122 chapters of *Harry Potter and the Methods of Rationality* by Eliezer Yudkowsky.
-> Claims already formalized in the project are marked with a checkmark.
 
 ---
 
-## Summary Table: Top Claims Ranked by (Tier 3 Potential x Feasibility)
+## How to read this table
 
-| Rank | Claim | Chapter(s) | Branch | Difficulty | Tier 3 Potential | Already Done? |
-|------|-------|-----------|--------|------------|-----------------|---------------|
-| 1 | Scope insensitivity as probability inequality | 48, 101 | Behavioral Economics / Probability | Medium | High | No |
-| 2 | Arbitrage impossibility under fixed exchange rates | 4 | Economics / Game Theory | Easy | High | No |
-| 3 | Privileging the hypothesis / locating cost | 17 | Information Theory / Bayesian | Hard | Very High | No |
-| 4 | Positive bias / 2-4-6 task (confirmation bias) | 8 | Hypothesis Testing / Logic | Medium | High | No |
-| 5 | Planning fallacy / outside view correction | 6 | Decision Theory / Statistics | Medium | High | No |
-| 6 | Hawk-Dove model of dominance contests | 19 | Evolutionary Game Theory | Medium | High | No |
-| 7 | Constrained optimization with binding constraints | 56 | Optimization Theory | Medium | High | No |
-| 8 | Taboo tradeoffs / value consistency | 82 | Decision Theory / Welfare Economics | Hard | Very High | No |
-| 9 | Time-Turner as NP oracle | 17 | Computational Complexity | Hard | Very High | Yes |
-| 10 | Contagious lies as dependency graph | 65 | Graph Theory / Information Theory | Medium | High | No |
-| 11 | Secret propagation in networks | 48 | Graph Theory / Probability | Medium | High | No |
-| 12 | Fundamental attribution error as conditional probability | 5 | Bayesian Reasoning | Easy | Medium | No |
-| 13 | Signal ambiguity enabling coalition formation | 60 | Game Theory / Signaling | Hard | High | No |
-| 14 | Induction proof of immortality desire | 39 | Mathematical Induction | Easy | Medium | No |
-| 15 | Sunk cost fallacy formalization | 76 | Decision Theory | Easy | Medium | No |
-| 16 | Base rate fallacy (P(Slytherin|Dark) vs P(Dark|Slytherin)) | 100 | Conditional Probability | Easy | High | No |
-| 17 | Bayesian likelihood ratio arithmetic | 86 | Bayesian Inference | Medium | High | No |
-| 18 | Milgram experiment prediction vs. actual (3% vs 65%) | 63 | Statistics / Calibration | Easy | Medium | No |
-| 19 | Fermi estimation methodology | 4 | Applied Mathematics | Easy | Medium | No |
-| 20 | Conservation of energy violation by magic | 2 | Physics / Hamiltonian Mechanics | Hard | Very High | No |
-| 21 | Quidditch Snitch as dominant strategy collapse | 7 | Game Design / Mechanism Design | Easy | High | No |
-| 22 | Escalation dynamics in sequential games | 19, 74 | Game Theory | Medium | High | No |
-| 23 | Occlumency as computational indistinguishability | 27 | Cryptography | Hard | Very High | No |
-| 24 | Mirror of Erised as algorithmic fairness | 109 | Computer Science / Mechanism Design | Hard | High | No |
-| 25 | Unbreakable Vow as binding commitment device | 113, 122 | Mechanism Design | Medium | High | No |
-| 26 | Broomstick physics: Aristotelian vs Newtonian | 59 | Classical Mechanics | Easy | Medium | No |
-| 27 | Potion conservation: output <= invested energy | 78 | Thermodynamics | Medium | High | No |
-| 28 | Existential risk from knowledge dissemination | 119 | Information Theory / Risk | Hard | Very High | No |
-| 29 | Hedonic adaptation deviation from predicted utility | 87 | Behavioral Economics | Medium | Medium | No |
-| 30 | Recursive strategic reasoning depth bound | 24 | Computational Complexity | Medium | High | No |
+Claims are ranked by **outcome uncertainty** — how hard it is to predict
+whether formalization will confirm, reveal hidden structure, refute, or
+get stuck. High uncertainty = high expected information = best target.
 
-### Already Formalized (skip or note only):
-- Bayesian posterior convergence (Ch. 2-3, 20, 86) -- `HpmorFormalized/Bayes/Basic.lean`
-- Novikov self-consistency / time travel (Ch. 11-17, 61) -- `HpmorFormalized/TimeTravel/Novikov.lean`
-- Grandfather paradox resolution (Ch. 11-17) -- `HpmorFormalized/TimeTravel/Paradox.lean`
-- Prisoner's Dilemma dominance (Ch. 33) -- `HpmorFormalized/GameTheory/Basic.lean`
-- Precommitment value (Ch. 75-77) -- `HpmorFormalized/DecisionTheory/Basic.lean`
-- Aumann's agreement theorem (Ch. 22-24) -- `HpmorFormalized/GameTheory/Aumann.lean`
-- EU under existential risk (Ch. 43-47) -- `HpmorFormalized/DecisionTheory/ExistentialRisk.lean`
-- Iterated PD folk theorem (Ch. 33) -- `HpmorFormalized/GameTheory/IteratedPD.lean`
-- Final exam game theory (Ch. 113-122) -- `HpmorFormalized/GameTheory/FinalExam.lean`
-- CausalDAG / topological ordering -- `HpmorFormalized/TimeTravel/CausalDAG.lean`
-- Time-Turner as NP oracle (Ch. 17) -- `HpmorFormalized/TimeTravel/NPOracle.lean`
+We learned from 13 completed formalizations that:
+- **Textbook results dressed as findings are not novel** (e.g., Aumann's common
+  priors assumption, Kolmogorov complexity UTM-dependence, (1-q)^N decay).
+  If you can look it up, don't formalize it to "discover" it.
+- **Modeling artifacts are not findings** (e.g., the 55% threshold depends on
+  arbitrary payoff values). If the result changes when you change the model
+  parameters, it's not structural.
+- **The best findings catch the argument using the wrong framework** (e.g.,
+  Harry claims EU reasoning but actually uses lexicographic preferences).
+  These only surface when you try to state the theorem precisely.
+- **Counterexamples to philosophical claims are gold** (e.g., lexicographic
+  preferences refute "sacred values are irrational"). These are genuinely novel.
+
+## Summary Table: Top Claims Ranked by Outcome Uncertainty
+
+| Rank | Claim | Ch. | Branch | Uncertainty | Why this is uncertain | Predicted outcome |
+|------|-------|-----|--------|-------------|----------------------|-------------------|
+| 1 | Timeless Decision Theory vs standard game theory | 33 | Decision Theory | Very high | TDT is presented as a distinct decision theory but it's unclear whether it can be formalized in a way that's both precise AND distinguishable from standard extensive-form game theory. It might collapse into something known, or it might require genuinely new foundations. | Unknown — this could confirm, refute, or reveal TDT is underspecified |
+| 2 | Positive bias / 2-4-6 task as Bayesian suboptimality | 8 | Hypothesis Testing | High | Harry claims confirmation bias is irrational. But there are Bayesian justifications for "positive testing" under certain prior distributions. Formalization might show Harry's critique is too strong — that positive testing is sometimes optimal. | Probably needs modification — the irrationality claim likely has conditions |
+| 3 | Hawk-Dove model of dominance contests | 19 | Evolutionary Game Theory | High | Draco's dominance contests map onto Hawk-Dove games, but the payoff structure in HPMOR (reputation, alliances) may not match the standard model. Does the ESS analysis change with HPMOR-specific payoffs? | Genuinely uncertain — depends on whether HPMOR payoffs match the standard model |
+| 4 | Scope insensitivity as probability inequality | 48, 101 | Behavioral Economics | High | HPMOR treats scope insensitivity as purely irrational. But bounded rationality models suggest it might be an optimal heuristic under cognitive constraints. Is there a formal sense in which ignoring scope is "rational enough"? | Probably needs modification — the claim may be too strong under bounded rationality |
+| 5 | Planning fallacy / outside view correction | 6 | Decision Theory | High | Harry advocates the "outside view" (reference class forecasting). But the outside view requires choosing a reference class, and that choice is not formalized. What makes one reference class better than another? | Probably needs modification — reference class selection is the hidden assumption |
+| 6 | Signal ambiguity enabling coalition formation | 60 | Game Theory / Signaling | High | Dumbledore's ambiguous signals allow flexible coalition formation. Can we formalize when ambiguity is strategically valuable vs when clarity dominates? This is a real open question in mechanism design. | Genuinely uncertain — ambiguity as a strategic tool is an active research area |
+| 7 | Mirror of Erised as algorithmic fairness | 109 | Mechanism Design | High | The Mirror shows you your "deepest desire" — is there a mechanism design interpretation where this is an incentive-compatible revelation device? Or does it fail strategyproofness? | Genuinely uncertain — depends on whether desires can be "reported" without strategic distortion |
+| 8 | Quidditch Snitch as dominant strategy collapse | 7 | Mechanism Design | Medium-high | Harry argues the Snitch makes the rest of Quidditch pointless. But this depends on the point values — is there a scoring system where the Snitch doesn't dominate? This is a mechanism design question with a likely clean answer, but the boundary conditions might surprise. | Probably confirms but the exact dominance boundary is non-obvious |
+| 9 | Escalation dynamics in sequential games | 19, 74 | Game Theory | Medium-high | Bullying escalation in HPMOR maps onto sequential games with commitment. Does the "escalation ladder" have a determinate outcome, or is it sensitive to assumptions about rationality? | Probably confirms standard escalation results but HPMOR-specific payoffs might change the equilibrium |
+| 10 | Recursive strategic reasoning depth bound | 24 | Computational Complexity | Medium-high | "I know that you know that I know..." — is there a formal depth limit? In finite games, bounded rationality models cap reasoning depth. But HPMOR characters reason arbitrarily deep. Is infinite depth actually required for the outcomes described? | Probably confirms a known bound but the connection to HPMOR's specific scenarios is uncertain |
+| 11 | Unbreakable Vow as binding commitment device | 113, 122 | Mechanism Design | Medium | Maps onto our existing precommitment results. The interesting question: does the "unbreakable" aspect interact with the multiple-equilibria problem (finding #2)? If you can't break the vow, can it trap you in a bad equilibrium? | Probably confirms but interaction with finding #2 could be novel |
+| 12 | Contagious lies as dependency graph | 65 | Graph Theory | Medium | Lies create consistency obligations — a dependency graph. But this is essentially constraint satisfaction, which is well-understood. The question is whether HPMOR's specific lie structures have non-obvious graph-theoretic properties. | Probably confirms standard constraint propagation |
+| 13 | Potion conservation: output <= invested energy | 78 | Thermodynamics | Medium | Extends finding #11 (conservation). If potions must conserve *some* quantity, what constraints does that impose on potion design? Interesting if it produces unexpected constraints. | Probably confirms but might interact with the modified-symmetry finding in novel ways |
+| 14 | Secret propagation in networks | 48 | Graph Theory / Probability | Medium | Related to finding #13 (knowledge risk) but in a network topology. The question is whether network structure changes the exponential decay result. Hub-and-spoke vs mesh might matter. | Probably extends #13 without new structural insight |
+| 15 | Bayesian likelihood ratio arithmetic | 86 | Bayesian Inference | Low-medium | Harry does explicit calculations. These either check out or they don't. Not much room for surprise. | Probably confirms — it's arithmetic |
+
+### Dropped from ranking (would confirm as stated — low information):
+- Base rate fallacy (Ch. 100) — textbook conditional probability, will confirm
+- Fundamental attribution error (Ch. 5) — well-known Bayesian framing
+- Sunk cost fallacy (Ch. 76) — well-understood, will confirm
+- Induction proof of immortality desire (Ch. 39) — trivial formalization
+- Milgram prediction vs actual (Ch. 63) — it's a numerical comparison
+- Fermi estimation (Ch. 4) — methodology, not a theorem
+- Broomstick physics (Ch. 59) — will confirm Newtonian vs Aristotelian
+- Hedonic adaptation (Ch. 87) — behavioral economics, hard to formalize as a theorem
+
+### Already Formalized:
+- Bayesian posterior convergence (Ch. 2-3) — `Bayes/Basic.lean` — Finding #1
+- Novikov self-consistency (Ch. 11-17) — `TimeTravel/Novikov.lean`
+- Grandfather paradox (Ch. 11-17) — `TimeTravel/Paradox.lean`
+- CausalDAG / topological ordering — `TimeTravel/CausalDAG.lean` — Finding #6
+- Time-Turner NP oracle (Ch. 17) — `TimeTravel/NPOracle.lean` — Finding #12
+- Precommitment value (Ch. 75-77) — `DecisionTheory/Basic.lean` — Finding #2
+- EU under existential risk (Ch. 43-47) — `DecisionTheory/ExistentialRisk.lean` — Finding #3
+- Taboo tradeoffs (Ch. 82) — `DecisionTheory/TabooTradeoffs.lean` — Finding #8
+- Hypothesis location (Ch. 17) — `Bayes/HypothesisLocation.lean` — Finding #9
+- Knowledge dissemination risk (Ch. 119) — `DecisionTheory/KnowledgeRisk.lean` — Finding #13
+- Aumann's agreement (Ch. 22-24) — `GameTheory/Aumann.lean` — Finding #7
+- Iterated PD folk theorem (Ch. 33) — `GameTheory/IteratedPD.lean` — Finding #5
+- Final exam (Ch. 113-122) — `GameTheory/FinalExam.lean` — Finding #4
+- Conservation of energy (Ch. 2) — `Physics/Conservation.lean` — Finding #11
+- Occlumency indistinguishability (Ch. 27) — `Logic/Occlumency.lean` — Finding #10
+- Prisoner's Dilemma dominance (Ch. 33) — `GameTheory/Basic.lean`
 
 ---
 
