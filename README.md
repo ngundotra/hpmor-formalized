@@ -10,22 +10,23 @@ So we take bits of HPMOR that sound like they ought to survive contact with math
 
 ## What Is In Here?
 
-At the moment, the project is a small library of formal experiments inspired by Harry's favorite habits:
+At the moment, the project is a growing library of formal experiments inspired by Harry's favorite habits:
 
 - Updating on evidence instead of clinging to priors.
 - Treating game theory as something more than a conversational prop.
 - Refusing to accept time travel unless it can be made to behave itself.
 - Looking at a dramatic claim and asking, "Fine. What are the axioms?"
 
-Some modules are serious proofs. Some are scaffolding for future work. All of them are trying, in one way or another, to cash out rationality in the unforgiving currency of type theory.
+Some modules are flagship results. Some are narrower models. All of them are trying, in one way or another, to cash out rationality in the unforgiving currency of type theory.
 
 ## Current Adventures
 
 ### Time Travel, Unfortunately
 
-The strongest part of the project so far lives in `TimeTravel`.
+The strongest part of the project still lives in `TimeTravel`.
 
 - [`HpmorFormalized/TimeTravel/Novikov.lean`](HpmorFormalized/TimeTravel/Novikov.lean) formalizes a version of Novikov self-consistency: finite time loops must settle into a paradox-free periodic story.
+- [`HpmorFormalized/TimeTravel/CausalDAG.lean`](HpmorFormalized/TimeTravel/CausalDAG.lean) formalizes causal consistency more seriously, with acyclicity, topological ordering, and conditions under which consistent histories can be propagated.
 - [`HpmorFormalized/TimeTravel/Paradox.lean`](HpmorFormalized/TimeTravel/Paradox.lean) models a toy paradox and gives the universe permission to cheat in exactly the way required to avoid contradiction.
 
 In other words: the Time-Turner does not get to shrug and create nonsense. The universe is allowed to be strange. It is not allowed to be inconsistent.
@@ -36,18 +37,29 @@ In other words: the Time-Turner does not get to shrug and create nonsense. The u
 
 McGonagall turns into a cat. Your prior objects. Bayes has no sympathy.
 
-This module has the core setup and several basic results, with some of the more interesting analysis still to be completed.
+The core results are now in place. The more interesting question is no longer whether the update works, but what additional quantitative facts we can extract once the theorem is formal.
 
-### Future Conquests
+### Game Theory, Which Was Always Going To Happen
 
-[`HpmorFormalized/DecisionTheory/Basic.lean`](HpmorFormalized/DecisionTheory/Basic.lean) and [`HpmorFormalized/GameTheory/Basic.lean`](HpmorFormalized/GameTheory/Basic.lean) are the beginnings of a larger campaign:
+[`HpmorFormalized/GameTheory/Aumann.lean`](HpmorFormalized/GameTheory/Aumann.lean) proves Aumann's agreement theorem in a finite setting and, more importantly, exhibits the hidden assumption HPMOR leaves implicit: common priors.
 
-- prisoner's dilemma and precommitment
-- bargaining and Nash-style reasoning
-- credible threats
-- the general proposition that "planning ahead" should perhaps not be considered exotic
+If Harry and Draco do not start from the same prior, then "rational Bayesians must converge" is not a theorem. It is a mood.
 
-Right now these modules are more promise than empire. That is acceptable. The point of a roadmap is that reality has not yet been bullied into compliance.
+The repo also includes:
+
+- [`HpmorFormalized/GameTheory/IteratedPD.lean`](HpmorFormalized/GameTheory/IteratedPD.lean)
+- [`HpmorFormalized/GameTheory/FinalExam.lean`](HpmorFormalized/GameTheory/FinalExam.lean)
+- [`HpmorFormalized/GameTheory/Basic.lean`](HpmorFormalized/GameTheory/Basic.lean)
+
+which together push beyond "game theory as ominous hand-waving" and toward actual strategic claims with assumptions attached.
+
+### Decision Theory, For Cases Where Being Eaten By Dementors Seems Suboptimal
+
+[`HpmorFormalized/DecisionTheory/Basic.lean`](HpmorFormalized/DecisionTheory/Basic.lean) covers foundational prisoner’s-dilemma and precommitment ideas.
+
+[`HpmorFormalized/DecisionTheory/ExistentialRisk.lean`](HpmorFormalized/DecisionTheory/ExistentialRisk.lean) extends the project into the much less cheerful territory where utility calculations interact with existential stakes.
+
+This is still an active frontier, but it is no longer accurate to describe the area as merely notional.
 
 ## Why This Exists
 
@@ -110,7 +122,7 @@ If using [Claude Code](https://claude.com/claude-code), an Aristotle agent and `
 
 Contributions are welcome, especially if you enjoy any of the following:
 
-- filling in `sorry`s
+- raising the tier of an existing formalization
 - formalizing a new HPMOR claim
 - turning vague rationalist gestures into explicit mathematics
 - stress-testing HPMOR claims and reporting what formalization reveals
