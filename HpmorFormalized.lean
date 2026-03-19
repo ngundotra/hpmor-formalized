@@ -10,6 +10,7 @@ import HpmorFormalized.DecisionTheory.Basic
 import HpmorFormalized.DecisionTheory.ExistentialRisk
 import HpmorFormalized.DecisionTheory.KnowledgeRisk
 import HpmorFormalized.DecisionTheory.TabooTradeoffs
+import HpmorFormalized.DecisionTheory.TDT
 import HpmorFormalized.GameTheory.Basic
 import HpmorFormalized.GameTheory.FinalExam
 import HpmorFormalized.GameTheory.Aumann
