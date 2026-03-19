@@ -10,7 +10,7 @@ Claims are ranked by **outcome uncertainty** — how hard it is to predict
 whether formalization will confirm, reveal hidden structure, refute, or
 get stuck. High uncertainty = high expected information = best target.
 
-We learned from 13 completed formalizations that:
+We learned from 16 completed formalizations that:
 - **Textbook results dressed as findings are not novel** (e.g., Aumann's common
   priors assumption, Kolmogorov complexity UTM-dependence, (1-q)^N decay).
   If you can look it up, don't formalize it to "discover" it.
@@ -27,9 +27,9 @@ We learned from 13 completed formalizations that:
 
 | Rank | Claim | Ch. | Branch | Uncertainty | Why this is uncertain | Predicted outcome |
 |------|-------|-----|--------|-------------|----------------------|-------------------|
-| 1 | Timeless Decision Theory vs standard game theory | 33 | Decision Theory | Very high | TDT is presented as a distinct decision theory but it's unclear whether it can be formalized in a way that's both precise AND distinguishable from standard extensive-form game theory. It might collapse into something known, or it might require genuinely new foundations. | Unknown — this could confirm, refute, or reveal TDT is underspecified |
-| 2 | Positive bias / 2-4-6 task as Bayesian suboptimality | 8 | Hypothesis Testing | High | Harry claims confirmation bias is irrational. But there are Bayesian justifications for "positive testing" under certain prior distributions. Formalization might show Harry's critique is too strong — that positive testing is sometimes optimal. | Probably needs modification — the irrationality claim likely has conditions |
-| 3 | Hawk-Dove model of dominance contests | 19 | Evolutionary Game Theory | High | Draco's dominance contests map onto Hawk-Dove games, but the payoff structure in HPMOR (reputation, alliances) may not match the standard model. Does the ESS analysis change with HPMOR-specific payoffs? | Genuinely uncertain — depends on whether HPMOR payoffs match the standard model |
+| ~~1~~ | ~~Timeless Decision Theory~~ | 33 | Decision Theory | ~~Very high~~ | **DONE — Finding #14.** TDT is a genuine intermediate theory (TDT=EDT in Newcomb, TDT≠EDT in Smoking Lesion) but requires causal structure as hidden input. Logical counterfactuals are provably underdetermined. | Prediction: unknown. Actual: more nuanced than any prediction — required two rounds of formalization to get right. |
+| ~~2~~ | ~~Positive bias / 2-4-6 task~~ | 8 | Hypothesis Testing | ~~High~~ | **DONE — Finding #15.** Confirmation bias is conditionally rational. Harry is right about the Wason task but wrong to generalize — under narrow-rule priors, positive testing is Bayesian-optimal. | Prediction: needs modification. Actual: confirmed prediction exactly. |
+| ~~3~~ | ~~Hawk-Dove dominance contests~~ | 19 | Evolutionary Game Theory | ~~High~~ | **DONE — Finding #16.** Reputation makes the system twice as fragile (threshold at (C-V)/2 not (C-V)). Slytherin is mathematically all-Hawk. | Prediction: genuinely uncertain. Actual: confirmed but the factor-of-2 fragility was a surprise. |
 | 4 | Scope insensitivity as probability inequality | 48, 101 | Behavioral Economics | High | HPMOR treats scope insensitivity as purely irrational. But bounded rationality models suggest it might be an optimal heuristic under cognitive constraints. Is there a formal sense in which ignoring scope is "rational enough"? | Probably needs modification — the claim may be too strong under bounded rationality |
 | 5 | Planning fallacy / outside view correction | 6 | Decision Theory | High | Harry advocates the "outside view" (reference class forecasting). But the outside view requires choosing a reference class, and that choice is not formalized. What makes one reference class better than another? | Probably needs modification — reference class selection is the hidden assumption |
 | 6 | Signal ambiguity enabling coalition formation | 60 | Game Theory / Signaling | High | Dumbledore's ambiguous signals allow flexible coalition formation. Can we formalize when ambiguity is strategically valuable vs when clarity dominates? This is a real open question in mechanism design. | Genuinely uncertain — ambiguity as a strategic tool is an active research area |
@@ -70,6 +70,9 @@ We learned from 13 completed formalizations that:
 - Conservation of energy (Ch. 2) — `Physics/Conservation.lean` — Finding #11
 - Occlumency indistinguishability (Ch. 27) — `Logic/Occlumency.lean` — Finding #10
 - Prisoner's Dilemma dominance (Ch. 33) — `GameTheory/Basic.lean`
+- Timeless Decision Theory (Ch. 33) — `DecisionTheory/TDT.lean` — Finding #14
+- Confirmation bias / 2-4-6 task (Ch. 8) — `Bayes/ConfirmationBias.lean` — Finding #15
+- Hawk-Dove with reputation (Ch. 19) — `GameTheory/HawkDove.lean` — Finding #16
 
 ---
 
