@@ -233,7 +233,7 @@ theorem no_universal_test_dominance :
     -- Both predict negative test similarly.
     refine ⟨⟨(9:ℝ)/10, (1:ℝ)/10, (1:ℝ)/2, (1:ℝ)/2,
             by positivity, by positivity, by positivity, by positivity⟩, ?_⟩
-    simp [softPosLR, softNegLR]
+    simp only [softPosLR, softNegLR]
     norm_num
   · -- Scenario where negative testing is better:
     -- Both predict positive test similarly,
@@ -241,22 +241,16 @@ theorem no_universal_test_dominance :
     -- Narrow predicts it with low probability (0.1).
     refine ⟨⟨(1:ℝ)/2, (1:ℝ)/2, (1:ℝ)/10, (9:ℝ)/10,
             by positivity, by positivity, by positivity, by positivity⟩, ?_⟩
-    simp [softPosLR, softNegLR]
+    simp only [softPosLR, softNegLR]
     norm_num
 
 -- ============================================================================
 -- § 5. Prior-Dependent Expected Information Gain
 -- ============================================================================
 
-/-- The expected log-likelihood-ratio (a simplified measure of expected information gain)
-    of a test, given a prior probability `w` that H_narrow is true (so 1-w for H_broad).
-
-    For a positive test with LR `lr_pos` (favoring narrow on success):
-    Expected info = w * P(success|narrow) * log(lr_pos) + (1-w) * P(success|broad) * log(1/lr_pos)
-
-    We work with the linear approximation (using the LR directly instead of log)
-    to keep things algebraically tractable. The key structural result — that
-    prior-dependence exists — holds regardless of whether we use log or linear. -/
+-- Note: We work with likelihood ratios directly rather than log-likelihood ratios.
+-- The key structural result — that prior-dependence exists — holds regardless of
+-- whether we use log or linear measures of information gain.
 
 /-- **Main Theorem: Confirmation bias is prior-dependent.**
 
