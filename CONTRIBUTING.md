@@ -1,87 +1,106 @@
 # Contributing to hpmor-formalized
 
-We welcome contributions from anyone interested in formal verification, rationality, or HPMOR. No prior Lean experience required for some contribution types.
+Welcome. If you are here, you have presumably looked at a fictional work full of ambitious claims and decided that the appropriate response was not applause, but formal verification.
 
-> **Before you start:** Read [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md).
-> Every formalization in this project must be **falsifiable** (Tier 1),
-> should be **faithful** to the original HPMOR claim (Tier 2), and should
-> actively try to be **surprising** (Tier 3). We are stress-testing the
-> methods of rationality, not collecting tautologies.
+Correct.
+
+This repository is for turning HPMOR arguments into definitions, lemmas, theorems, counterexamples, and occasionally the discovery that a dramatic speech was quietly leaning on an assumption nobody bothered to say out loud.
+
+Before you begin, read [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md).
+
+The short version:
+
+- Tier 1: the claim must be falsifiable
+- Tier 2: the formalization must actually resemble the HPMOR claim
+- Tier 3: the formalization should teach us something the story did not make explicit
+
+We are not collecting tautologies. We are interrogating arguments.
 
 ## Ways to contribute
 
-### 1. Fill in a `sorry`
+### 1. Raise the tier of an existing module
 
-The fastest way to contribute. Search the codebase for `sorry` -- each one is a theorem statement that compiles but lacks a proof. Current open `sorry`s:
+This is usually the highest-leverage contribution.
 
-| Theorem | File | Difficulty |
-|---------|------|-----------|
-| `posterior_tendsto_one` | `Bayes/Basic.lean` | Medium -- requires Mathlib's `Filter.Tendsto` and real analysis |
-| `posterior_monotone_in_L` | `Bayes/Basic.lean` | Easy-Medium -- monotonicity of a rational function |
-| `posterior_le_one` | `Bayes/Basic.lean` | Easy -- algebraic bound |
+Many modules already compile cleanly. That does not mean they are finished. A proof can be valid and still be too narrow, too toy, or too polite to reality.
 
-To find all `sorry`s:
-```bash
-grep -rn "sorry" HpmorFormalized/
-```
+Useful upgrades include:
+
+- generalizing a theorem from a specific example to a class of structures
+- weakening hypotheses and checking whether the result still survives
+- replacing a hardcoded construction with a more faithful model
+- proving the hidden assumption a previous version silently relied on
+- adding a `## Findings` section that explains what formalization revealed
+
+Examples:
+
+- turn a one-off paradox example into a theorem about arbitrary finite transition systems
+- replace a simplified causal model with one that captures the actual obstruction
+- strengthen a Bayesian result from "approaches 1" to quantitative bounds on how much evidence is needed
 
 ### 2. Formalize a new HPMOR claim
 
-HPMOR is full of formalizable claims. Some ideas for new modules:
+HPMOR is full of claims that sound persuasive in prose and become much more interesting when forced into mathematics.
 
-| HPMOR Concept | Chapters | Possible Lean formalization | Tier 3 potential |
-|--------------|----------|-----------------------------|------------------|
-| Aumann's agreement theorem | 22-24 | Common knowledge + Bayesian agents must agree | High: does it require common priors? HPMOR doesn't say |
-| Patronus 2.0 / Dementor model | 43-47 | Utility functions, expected value under existential risk | High: standard EU may not handle -infinity utility |
-| Conservation laws of magic | 4-6, 28-30 | Conservation laws as invariants of a dynamical system | Medium: what symmetry group does magic conservation imply? |
-| Iterated PD / folk theorem | 33 | Cooperation thresholds under iteration | High: find exact discount factor bounds Harry glosses over |
-| Interdict of Merlin | 77-78 | Information-theoretic bounds on knowledge transmission | Medium: what channel capacity does the Interdict imply? |
-| Final exam (Ch. 113-122) | 113-122 | Multi-agent game under incomplete information | High: is Harry's strategy actually optimal? |
+Good candidates:
 
-**Aim for Tier 3.** The best contributions don't just confirm what HPMOR
-says -- they reveal what HPMOR *didn't* say. Choose the most general setting,
-use the weakest hypotheses, and report what the proof actually required.
+| HPMOR concept | Chapters | Possible formalization | Why it is interesting |
+|--------------|----------|------------------------|-----------------------|
+| Patronus 2.0 / Dementor reasoning | 43-47 | Expected utility under existential risk | Standard EU may fail if one outcome has effectively negative infinity utility |
+| Conservation laws of magic | 4-6, 28-30 | Invariants of a dynamical system | What symmetry assumptions would actually imply "conservation of magic"? |
+| Iterated prisoner's dilemma | 33 | Cooperation thresholds under repeated play | "Iteration helps" is not a theorem until the discount factor shows up |
+| Interdict of Merlin | 77-78 | Information-theoretic transmission bounds | What channel capacity would the Interdict impose? |
+| Final exam strategy | 113-122 | Extensive-form or incomplete-information game | Was Harry optimal, or merely theatrically competent? |
 
-To add a new module:
+When choosing a claim, **rank by your uncertainty about the outcome**, not by difficulty or importance. If you already know it will verify cleanly, it's bookkeeping. If you genuinely can't predict whether it will confirm, need modification, or turn out to be unmodelable, that's where the findings come from. See the "Choosing What to Formalize" section in [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md) for the full framework.
 
-1. Create the file under `HpmorFormalized/YourTopic/YourFile.lean`
-2. Add `import HpmorFormalized.YourTopic.YourFile` to `HpmorFormalized.lean`
-3. Start with a module docstring (`/-! ... -/`) that explains:
-   - Which HPMOR chapters it formalizes
-   - What claims are being formalized
-   - What the mathematical model is
-4. Define your structures and state your theorems
-5. Prove what you can, use `sorry` for the rest
-6. Run `lake build` to make sure everything compiles
-7. Write a `## Findings` section in the module docstring (see
-   [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md) for the template)
-8. Self-score against the acceptance scorecard before submitting
+Write a `## Prediction` in your module docstring before you start proving anything. This keeps you honest.
 
-### 3. Improve existing proofs
+### 3. Improve the exposition
 
-Look for opportunities to **raise the tier** of existing formalizations:
+This project is half proof artifact, half research diary.
 
-- Generalize a theorem that only works on a specific type to work on a class
-  (e.g., replace a `Bool` proof with a `Finite S` proof)
-- Weaken hypotheses and see if the theorem still holds -- if so, you've
-  found a sharper result
-- Add a `## Findings` section to a module that doesn't have one
-- Fix any remaining Mathlib linter warnings (run `lake build` and check)
+Helpful non-proof contributions include:
 
-### 4. Propose claims to formalize
+- improving module docstrings
+- writing or refining the companion `.md` explanations
+- documenting what a theorem does and does not establish
+- clarifying where a result is general versus merely illustrative
+- making the argument easier to follow without making it less precise
 
-Open an issue describing:
-- The HPMOR chapter and passage
-- The mathematical claim being made
-- A sketch of how you'd model it
+If a future reader cannot tell what was actually proved, the repo is failing one of its jobs.
 
-You don't need to know Lean to do this.
+### 4. Propose a claim or counterexample
+
+Open an issue if you have:
+
+- an HPMOR passage that seems formalizable
+- a suspicion that an existing theorem is too weak or too strong
+- a counterexample that shows a current formalization is missing an assumption
+- a better model for an already-formalized idea
+
+You do not need to know Lean to do this. You need only the rare and valuable willingness to ask, "Wait, does that actually follow?"
+
+## How to add a new module
+
+1. Create a file under `HpmorFormalized/YourTopic/YourFile.lean`.
+2. Add `import HpmorFormalized.YourTopic.YourFile` to [HpmorFormalized.lean](/home/ngundotra/Documents/hpmor-formalized/HpmorFormalized.lean).
+3. Start with a module docstring explaining:
+   - which HPMOR chapters it formalizes
+   - what claim is being tested
+   - what mathematical model you chose
+   - what would count as success or failure
+4. State the main definitions and theorems.
+5. Add a `## Findings` section to the module docstring describing what formalization taught you.
+6. If helpful, add a companion markdown note beside the module.
+7. Run `lake build`.
+8. Update [ROADMAP.md](ROADMAP.md) if the project state or priorities changed.
 
 ## Development setup
 
 ### Prerequisites
 
-Install [elan](https://github.com/leanprover/elan) (the Lean version manager):
+Install [elan](https://github.com/leanprover/elan), the Lean toolchain manager:
 
 ```bash
 curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh
@@ -92,74 +111,84 @@ curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf 
 ```bash
 git clone https://github.com/ngundotra/hpmor-formalized.git
 cd hpmor-formalized
-lake exe cache get    # downloads prebuilt Mathlib oleans (~5 min)
-lake build            # builds the project
+lake exe cache get
+lake build
 ```
 
 ### Editor setup
 
 VS Code with the [lean4 extension](https://marketplace.visualstudio.com/items?itemName=leanprover.lean4) is the recommended setup. It gives you:
-- Real-time type checking and error highlighting
-- Goal state display (see what you need to prove)
-- Go-to-definition for Mathlib lemmas
 
-### Workflow
+- real-time type checking
+- goal state display
+- jump-to-definition for Mathlib lemmas
+- immediate evidence that Lean has found the exact place where your argument became hand-wavy
 
-1. Create a branch: `git checkout -b your-feature`
-2. Make changes
-3. Run `lake build` -- must pass with no errors (warnings from `sorry` are OK)
-4. Open a PR
+## Workflow
 
-CI runs `lake build` on every push, so you'll know immediately if something breaks.
+1. Create a branch.
+2. Make the model sharper, the proof stronger, or the exposition clearer.
+3. Run `lake build`.
+4. Open a PR.
+
+CI checks the project on every push. If reality objects, it will do so in public and with line numbers.
 
 ## Code style
 
 ### Module docstrings
 
-Every `.lean` file should start with a `/-! ... -/` block explaining:
-- Which HPMOR chapters it relates to
-- What mathematical claims are being formalized
-- A brief description of the approach
+Every `.lean` file should begin with a `/-! ... -/` block that explains:
 
-### Naming conventions
+- the HPMOR chapters or scene
+- the claim being formalized
+- the mathematical setup
+- the main result
+- the findings, especially any hidden assumption, limitation, or surprise
+
+### Naming
 
 Follow Mathlib conventions:
-- Theorem names: `snake_case`, descriptive (e.g., `novikov_periodic_consistency`)
-- Structure names: `CamelCase` (e.g., `TimeLoop`, `CausalDAG`)
-- Use `_of_` for implications (e.g., `fixed_point_of_idempotent`)
+
+- theorem names in `snake_case`
+- structure names in `CamelCase`
+- implication-style names using `_of_` where appropriate
 
 ### Proof style
 
-- Prefer tactic proofs for readability
-- Use `sorry` freely for work-in-progress -- it compiles and communicates intent
-- Comment non-obvious proof steps
-- Keep proofs under ~20 lines where possible
+Prefer readable proofs over clever ones.
+
+- use tactics when they improve legibility
+- comment non-obvious steps sparingly
+- keep proofs local and modular
+- generalize only when it buys real explanatory power
+
+There is no prize for writing something nobody can maintain except the person who just consumed three cups of tea and a page of category theory.
 
 ### Acceptance criteria
 
-Every theorem must pass the scorecard in [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md):
+Every serious contribution should satisfy the scorecard in [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md):
 
-- **Required:** Falsifiable (Tier 1) -- dropping a hypothesis must break it
-- **Required:** Non-trivial -- proof is not just `rfl` / `simp` / `decide`
-- **Required:** Faithful (Tier 2) -- a mathematician would recognize the original claim
-- **Preferred:** General -- about a class of objects, not a specific example
-- **Actively sought:** Surprising (Tier 3) -- formalization revealed something
-  the informal argument hid
+- Required: falsifiable
+- Required: non-trivial
+- Required: faithful to the source claim
+- Preferred: general rather than one-off
+- Actively sought: surprising in a useful way
 
-Include a `## Findings` section in your module docstring documenting what
-formalization taught you. Even "no hidden assumptions found" is worth stating.
+Write down what formalization changed. Even "the original claim was fine, but only with this extra assumption" is a valuable result.
 
-## Using autoformalization tools
+## Autoformalization tools
 
-If you have access to Harmonic's Aristotle, Axiom's AXLE, or similar tools, you can:
+If you use Aristotle, AXLE, or another proof-generating tool:
 
-1. Feed them the natural-language claim from HPMOR
-2. Review and clean up the generated Lean code
-3. Verify it compiles against our Mathlib version (v4.28.0)
-4. Submit the result as a PR
+1. start from the actual HPMOR claim, not a watered-down substitute
+2. review the generated Lean carefully
+3. verify it compiles against this project's Mathlib version
+4. keep the mathematics, not the vibes
 
-We're interested in documenting which tools work well for which kinds of formalizations.
+Generated code is welcome. Unexamined code is not.
 
-## Questions?
+## Questions
 
-Open an issue. We're happy to help newcomers get started with Lean or find good first issues.
+Open an issue.
+
+The ideal contribution is not "I proved something." It is "I found out exactly what this argument needs in order to be true."

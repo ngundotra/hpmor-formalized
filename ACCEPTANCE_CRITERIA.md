@@ -9,6 +9,76 @@ bar is deliberately high: we are not collecting tautologies dressed up in Lean
 syntax. We are building machine-checked arguments that a mathematician would
 find *informative*.
 
+---
+
+## Choosing What to Formalize
+
+Before writing any Lean, ask: **would I learn something by trying?**
+
+The project's best results came from claims where the outcome was genuinely
+uncertain. The worst use of time is formalizing something where you already
+know what will happen. This applies in both directions — a claim you're
+sure will verify is bookkeeping, and a claim you're sure can't be modeled
+is stalling.
+
+### The four outcome categories
+
+Every formalization attempt lands in one of these:
+
+| Category | What happens | Information value |
+|----------|-------------|-------------------|
+| **Confirms as stated** | The theorem goes through with exactly the hypotheses HPMOR implies. | Low. You verified a correct argument. |
+| **Confirms but reveals hidden structure** | The claim is true, but formalization forces an assumption to be explicit that changes your understanding. | High. The claim isn't wrong, it's incomplete. |
+| **Fails as stated, fixable** | The claim is false in the form HPMOR presents it, but a nearby claim is true. The gap is the finding. | High. The conclusion may be right but the reasoning is wrong. |
+| **Fails as stated, not obviously fixable** | The claim doesn't formalize and it's unclear what the right version would be. | Very high — but also the hardest to produce. |
+
+### How to choose
+
+**Rank claims by your uncertainty about which category they'll land in.**
+
+If you can confidently predict the outcome, the expected information gain
+is low. The claims that make you uncomfortable — where you genuinely
+cannot tell whether you'll confirm, refine, refute, or get stuck — are
+the ones worth your time.
+
+| Your prediction confidence | Action |
+|---------------------------|--------|
+| "I'm sure this goes through as stated" | Skip unless it's a dependency for something uncertain |
+| "I'm sure this can't be modeled" | Skip unless you have a specific reason to believe a model exists |
+| "I think it works but I'm not sure what hypotheses I'll need" | Good target — hidden structure likely |
+| "I genuinely don't know if this is true, fixable, or meaningless" | Best target — maximum expected information |
+
+### State your prediction before you start
+
+Before opening a `.lean` file, write 2-3 sentences in the module docstring
+under a `## Prediction` heading:
+
+```
+## Prediction
+
+I expect this to [confirm as stated / need modification / fail / be hard to model].
+The hypothesis I'm most uncertain about is [X].
+If this confirms cleanly, I'll be surprised because [Y].
+```
+
+This is not a test you can fail. It is a calibration tool. The point is to
+create a record so you can honestly compare prediction to outcome.
+
+### Report the outcome against your prediction
+
+The `## Findings` section (described below) should include a line:
+
+```
+- **Prediction vs. reality**: I predicted [X]. What actually happened was [Y].
+```
+
+If you predicted confirmation and found a hidden assumption, that's
+interesting. If you predicted a hidden assumption and found one, that's
+still useful but less surprising. If you predicted nothing interesting
+and were right, the claim was probably too easy.
+
+---
+
 ## The Three Tiers
 
 Every formalized claim must reach **Tier 1** to merge. We strongly prefer
