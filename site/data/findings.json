@@ -3,11 +3,71 @@
     "title": "HPMOR Findings Map",
     "sourceOfTruth": "ROADMAP.md",
     "syncPolicy": "This site mirrors ROADMAP.md by hand. If they disagree, ROADMAP.md wins.",
+    "repoStats": {
+      "modules": "10",
+      "theorems": "40+",
+      "tier3Findings": "7",
+      "sorries": "0"
+    },
     "summaryChips": [
-      "Some claims survived formalization with dignity intact",
-      "Some required assumptions the prose neglected to confess",
-      "Some turned out to be examples wearing the costume of theorems",
+      "The project is strongest when it exposes hidden assumptions, not when it merely restates folklore",
+      "A theorem that survives formalization is useful; a claim that changes under formalization is more useful",
+      "The page is optimized for readers who care what the math forced us to admit",
       "The goal is not task tracking. The goal is epistemic damage assessment."
+    ],
+    "whyItMatters": [
+      {
+        "title": "This is not fan commentary",
+        "description": "The point is to stress-test rationalist claims from HPMOR and record where formalization preserved them, narrowed them, or broke them."
+      },
+      {
+        "title": "The interesting output is not just proofs",
+        "description": "The interesting output is where the proof required an extra assumption, exposed a weaker model, or changed what the original argument seemed to imply."
+      },
+      {
+        "title": "This is a prioritization tool",
+        "description": "For EA and LessWrong readers, the useful question is where additional formalization is most likely to reveal something non-obvious and decision-relevant."
+      }
+    ],
+    "keyTakeaways": [
+      {
+        "title": "Expected utility breaks under existential risk",
+        "change": "Harry's stated framework works algebraically but self-defeats once every option carries some chance of negative-infinity catastrophe.",
+        "whyItMatters": "The story gets the policy intuition right, but appears to need lexicographic preferences rather than ordinary expected utility."
+      },
+      {
+        "title": "Aumann does not apply to Harry and Draco as written",
+        "change": "Agreement requires common priors, and the story's central negotiation does not plausibly satisfy that assumption.",
+        "whyItMatters": "This sharply limits what 'rational agents must converge' can mean in-world."
+      },
+      {
+        "title": "Iterated prisoner's dilemma yields a non-obvious threshold result",
+        "change": "The cooperation threshold depends on temptation and punishment, but not on the sucker payoff.",
+        "whyItMatters": "That is the sort of thing the prose gestures toward but only the formal calculation reveals."
+      },
+      {
+        "title": "Some time-travel results are theorems; others are model warnings",
+        "change": "Novikov-style periodic consistency is strong, but consistent-history propagation becomes fragile once multiple causes merge.",
+        "whyItMatters": "The time-travel story is most credible when the site distinguishes general results from model-dependent constraints."
+      }
+    ],
+    "legend": [
+      {
+        "label": "Solid",
+        "description": "A theorem-shaped result that is both mathematically non-trivial and recognizably faithful to the HPMOR claim."
+      },
+      {
+        "label": "Qualified",
+        "description": "A useful result, but one whose interpretation depends on modeling choices, missing assumptions, or narrower scope than the prose suggests."
+      },
+      {
+        "label": "Illustrative",
+        "description": "A machine-checked example or toy model that clarifies the shape of an argument without yet proving the general phenomenon."
+      },
+      {
+        "label": "Tier",
+        "description": "The acceptance tier from the repo rubric: falsifiable first, faithful second, surprising third."
+      }
     ]
   },
   "caseFiles": [
@@ -18,6 +78,13 @@
       "currentTier": "Tier 2",
       "signal": "Strongest work in the repo",
       "status": "Proven, with real mathematical content",
+      "modulePath": "HpmorFormalized/TimeTravel/Novikov.lean",
+      "theoremAnchors": [
+        "novikov_periodic_consistency",
+        "time_turner_consistency"
+      ],
+      "proofStatus": "General finite-state theorem; fully proven",
+      "readingMode": "Faithful theorem",
       "hpmorClaim": "A deterministic time loop cannot produce arbitrary paradox; on a finite state space it must settle into a self-consistent cycle.",
       "whatSurvived": "The periodic-orbit theorem survived translation. The result is general, falsifiable, and recognizably the HPMOR claim rather than a decorative approximation of it.",
       "whatRealityObjectedTo": "Reality was cooperative but not indulgent. The current file still stops short of tight period bounds and a cleaner reduction to known fixed-point theory.",
@@ -34,6 +101,13 @@
       "currentTier": "Tier 1",
       "signal": "Useful but too polite",
       "status": "Partly faithful, structurally weak",
+      "modulePath": "HpmorFormalized/TimeTravel/CausalDAG.lean",
+      "theoremAnchors": [
+        "CausalDAG.topological_order_exists",
+        "CausalDAG.consistent_history_exists_forest"
+      ],
+      "proofStatus": "Substantive but model-sensitive; hidden assumptions surfaced",
+      "readingMode": "Qualified structural theorem",
       "hpmorClaim": "Acyclic causal structure should guarantee paradox-free histories.",
       "whatSurvived": "The basic intuition survives: causal loops are bad, topological structure matters, and consistency arguments should proceed in causal order rather than by wishful thinking.",
       "whatRealityObjectedTo": "The old DAG setup smuggles in acyclicity through the indexing scheme, which means several theorems are true for reasons too cheap to be interesting. The linear-history result is also narrower than the prose would like.",
@@ -50,6 +124,13 @@
       "currentTier": "Tier 1",
       "signal": "Good demo, not yet a theorem of substance",
       "status": "Hardcoded toy model",
+      "modulePath": "HpmorFormalized/TimeTravel/Paradox.lean",
+      "theoremAnchors": [
+        "novikov_resolves_iterated_paradox",
+        "hpmor_unique_fixpoint"
+      ],
+      "proofStatus": "Generalized fixed-point machinery with HPMOR illustration preserved",
+      "readingMode": "Faithful theorem plus example",
       "hpmorClaim": "The universe resolves paradoxes by selecting a self-consistent outcome outside the agent's intended options.",
       "whatSurvived": "The toy fixed-point story is clear, readable, and machine-checked. It does demonstrate the shape of the intended resolution.",
       "whatRealityObjectedTo": "Unfortunately, every theorem depends on a handcrafted three-state enum. At present the model illustrates the argument rather than forcing nature to admit the general phenomenon.",
@@ -66,6 +147,13 @@
       "currentTier": "Tier 1-2",
       "signal": "Core claim nearly complete",
       "status": "Definitions and substantive theorem direction in place",
+      "modulePath": "HpmorFormalized/Bayes/Basic.lean",
+      "theoremAnchors": [
+        "posterior_tendsto_one",
+        "posterior_monotone_in_L"
+      ],
+      "proofStatus": "Core theorem family proven; quantitative sharpening remains open",
+      "readingMode": "Faithful theorem",
       "hpmorClaim": "Even an astronomically tiny prior can be overwhelmed by sufficiently strong evidence.",
       "whatSurvived": "The central update story survives cleanly. Evidence can, in fact, crush prior skepticism, and Lean has been kind enough not to object.",
       "whatRealityObjectedTo": "The slogan is no longer the interesting part. The real pressure point is quantitative: how fast does the posterior move, and exactly how much evidence buys how much confidence?",
@@ -82,6 +170,13 @@
       "currentTier": "Tier 1",
       "signal": "Stub with honest intent",
       "status": "Trivial consequences of payoff inequalities",
+      "modulePath": "HpmorFormalized/DecisionTheory/Basic.lean",
+      "theoremAnchors": [
+        "precommitment_strictly_helps",
+        "strict_improvement_requires_incredibility"
+      ],
+      "proofStatus": "Now stronger than a stub, but uneven in depth across subclaims",
+      "readingMode": "Qualified theorem family",
       "hpmorClaim": "Precommitment and strategic foresight can change what rational action looks like.",
       "whatSurvived": "The basic payoff facts are fine. Defection dominates in the vanilla game, and mutual cooperation is better than mutual defection whenever the reward ordering says it is.",
       "whatRealityObjectedTo": "This is still mostly bookkeeping. The current results do not yet explain equilibrium selection, credible threats, or the actual mechanism by which precommitment changes the game rather than merely sounding impressive.",
@@ -98,6 +193,13 @@
       "currentTier": "Tier 1",
       "signal": "Highest surprise potential",
       "status": "Mixed: mostly early, but strategically promising",
+      "modulePath": "HpmorFormalized/GameTheory/Aumann.lean",
+      "theoremAnchors": [
+        "aumann_agreement",
+        "no_agreement_without_common_priors"
+      ],
+      "proofStatus": "Tier-3 style result with explicit counterexample",
+      "readingMode": "Faithful theorem plus assumption audit",
       "hpmorClaim": "Rational agents negotiating under common knowledge and strategic pressure should converge or behave predictably.",
       "whatSurvived": "Even before the newer proofs landed, this was already the most promising hunting ground for hidden assumptions. It remains the place where formalization is most likely to extract a confession.",
       "whatRealityObjectedTo": "Game-theoretic prose is unusually prone to contraband: common priors, credibility assumptions, equilibrium concepts, and other premises the story often treats as if they came free with the English language.",
@@ -132,34 +234,46 @@
   ],
   "nextAttacks": [
     {
-      "priority": "High surprise potential",
       "title": "Expected utility under existential risk",
-      "description": "Test whether Harry's Dementor-style reasoning survives once utility can effectively hit negative infinity, rather than politely remaining inside the usual textbook range."
+      "expectedValue": "High",
+      "difficulty": "Medium",
+      "hiddenAssumptionPotential": "High",
+      "description": "Clarify whether the story's policy intuition requires lexicographic preferences, bounded utilities, or a different framework altogether."
     },
     {
-      "priority": "High surprise potential",
       "title": "Iterated prisoner's dilemma / folk theorem",
-      "description": "Replace the atmospheric claim that repetition helps with exact discount-factor thresholds for when cooperation is actually sustainable."
+      "expectedValue": "High",
+      "difficulty": "Medium",
+      "hiddenAssumptionPotential": "High",
+      "description": "Push beyond the slogan that repetition helps and identify which structures actually sustain cooperation."
     },
     {
-      "priority": "High surprise potential",
       "title": "Final exam strategy analysis",
-      "description": "Model the final confrontation as an actual game and determine whether Harry was optimal or merely fast-talking in the vicinity of danger."
+      "expectedValue": "High",
+      "difficulty": "Medium-High",
+      "hiddenAssumptionPotential": "Medium",
+      "description": "Move from a threshold observation to a real incomplete-information analysis of the final confrontation."
     },
     {
-      "priority": "Medium surprise potential",
       "title": "Conservation of magic",
-      "description": "Ask what symmetry assumptions would be required for the phrase 'conservation of magic' to mean anything more precise than narrative insistence."
+      "expectedValue": "Medium-High",
+      "difficulty": "High",
+      "hiddenAssumptionPotential": "High",
+      "description": "Ask what symmetry assumptions are actually required for 'conservation of magic' to cash out mathematically."
     },
     {
-      "priority": "Medium surprise potential",
       "title": "Interdict of Merlin",
-      "description": "Treat the Interdict as an information channel constraint and compute what capacity limit the story would need in order to stop sounding mystical and start sounding specified."
+      "expectedValue": "Medium",
+      "difficulty": "Medium",
+      "hiddenAssumptionPotential": "Medium-High",
+      "description": "Treat the Interdict as an information constraint and identify the quantitative assumptions needed for it to work."
     },
     {
-      "priority": "Medium surprise potential",
       "title": "Precommitment changes the game",
-      "description": "Pin down the precise conditions under which giving yourself fewer future options is not madness but optimal strategy."
+      "expectedValue": "Medium-High",
+      "difficulty": "Medium",
+      "hiddenAssumptionPotential": "High",
+      "description": "Characterize the exact game structures under which restricting future options genuinely increases value."
     }
   ],
   "tools": [

@@ -17,9 +17,9 @@
         <h1>This is not a roadmap. It is a record of where reality refused to cooperate.</h1>
         <p class="lede">
           We took claims from <em>Harry Potter and the Methods of Rationality</em>, translated them
-          into definitions and theorems, and then waited for mathematics to object. Sometimes it
-          objected politely. Sometimes it produced a hidden assumption and dropped it on the desk
-          like contraband. This page is the resulting incident log.
+          into definitions and theorems, and then asked what changed under formalization. Some
+          claims survived intact. Some required assumptions the prose did not state. Some turned
+          out to be examples wearing the costume of theorems. This page tracks those updates.
         </p>
         <div class="hero-meta">
           <span id="source-note" class="meta-pill"></span>
@@ -35,6 +35,30 @@
           </div>
           <div id="dashboard" class="dashboard-grid"></div>
           <div id="summary" class="summary-strip"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-heading">
+            <p class="section-kicker">Why This Matters</p>
+            <h2>Why a rationalist audience should care</h2>
+          </div>
+          <div id="why-it-matters" class="why-grid"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-heading">
+            <p class="section-kicker">Takeaways</p>
+            <h2>What formalization changed most</h2>
+          </div>
+          <div id="takeaways" class="takeaway-list"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-heading">
+            <p class="section-kicker">Legend</p>
+            <h2>How to read the labels</h2>
+          </div>
+          <div id="legend" class="legend-grid"></div>
         </section>
 
         <section class="section">
@@ -56,15 +80,15 @@
         <section class="section">
           <div class="section-heading">
             <p class="section-kicker">Next Attacks</p>
-            <h2>Where additional formalization is most likely to make the story pay rent</h2>
+            <h2>Where additional work is most likely to change our mind</h2>
           </div>
-          <div id="attacks" class="attack-grid"></div>
+          <div id="attacks" class="attack-table-wrap"></div>
         </section>
 
         <section class="section">
           <div class="section-heading">
             <p class="section-kicker">Tools</p>
-            <h2>Autoformalization, or delegated combat with syntax</h2>
+            <h2>Tooling notes</h2>
           </div>
           <div id="tools" class="tool-grid"></div>
         </section>
@@ -77,7 +101,7 @@
           <p>
             This microsite is a presentation layer over the findings currently recorded in the
             repository's <code>ROADMAP.md</code>. If the site and the markdown file ever disagree,
-            believe the markdown file. It has suffered more.
+            the markdown file wins.
           </p>
         </section>
       </main>

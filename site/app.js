@@ -13,6 +13,9 @@ document.querySelector("#sync-note").textContent = data.meta.syncPolicy;
 
 renderDashboard(data);
 renderSummary(data);
+renderWhyItMatters(data.meta.whyItMatters);
+renderTakeaways(data.meta.keyTakeaways);
+renderLegend(data.meta.legend);
 renderCaseFiles(data.caseFiles);
 renderLedger(data.hiddenAssumptions);
 renderAttacks(data.nextAttacks);
@@ -27,19 +30,29 @@ function renderDashboard(siteData) {
 
   const stats = [
     {
-      label: "Case Files",
-      value: String(total),
-      blurb: "Distinct formalization fronts currently tracked from the findings record.",
+      label: "Modules",
+      value: escapeHtml(siteData.meta.repoStats.modules),
+      blurb: "Imported modules currently in the formalization library.",
+    },
+    {
+      label: "Theorems",
+      value: escapeHtml(siteData.meta.repoStats.theorems),
+      blurb: "Approximate theorem count recorded in the roadmap.",
+    },
+    {
+      label: "Tier 3 Findings",
+      value: escapeHtml(siteData.meta.repoStats.tier3Findings),
+      blurb: "Findings that actually changed what the informal story seemed to imply.",
+    },
+    {
+      label: "Current Split",
+      value: `${byVerdict.Solid || 0}/${byVerdict.Qualified || 0}/${byVerdict.Illustrative || 0}`,
+      blurb: "Solid, qualified, and illustrative case files in the current surface view.",
     },
     {
       label: "Hidden Assumptions",
       value: String(hiddenAssumptions),
-      blurb: "Places where formalization forced an unspoken premise into view.",
-    },
-    {
-      label: "Solid vs Qualified",
-      value: `${byVerdict.Solid || 0}/${byVerdict.Qualified || 0}`,
-      blurb: "Solid cores versus claims that survive only with important caveats.",
+      blurb: "Places where formalization forced an unstated premise into view.",
     },
     {
       label: "Tier Spread",
@@ -47,9 +60,9 @@ function renderDashboard(siteData) {
         .sort()
         .map((tier) => tier.replace("Tier ", "T"))
         .join(" · "),
-      blurb: "Current acceptance-tier footprint across the tracked case files.",
+      blurb: "Acceptance-tier footprint across the case files shown here.",
     },
-  ];
+  ].slice(0, 6);
 
   dashboard.innerHTML = stats
     .map(
@@ -68,6 +81,62 @@ function renderSummary(siteData) {
   const summary = document.querySelector("#summary");
   summary.innerHTML = siteData.meta.summaryChips
     .map((chip) => `<span class="summary-chip">${escapeHtml(chip)}</span>`)
+    .join("");
+}
+
+function renderWhyItMatters(items) {
+  const container = document.querySelector("#why-it-matters");
+  container.innerHTML = items
+    .map(
+      (item) => `
+        <article class="why-card">
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.description)}</p>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderTakeaways(items) {
+  const container = document.querySelector("#takeaways");
+  container.innerHTML = `
+    <table class="takeaway-table">
+      <thead>
+        <tr>
+          <th>Finding</th>
+          <th>What changed</th>
+          <th>Why it matters</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${items
+          .map(
+            (item) => `
+              <tr>
+                <td>${escapeHtml(item.title)}</td>
+                <td>${escapeHtml(item.change)}</td>
+                <td>${escapeHtml(item.whyItMatters)}</td>
+              </tr>
+            `
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderLegend(items) {
+  const container = document.querySelector("#legend");
+  container.innerHTML = items
+    .map(
+      (item) => `
+        <article class="legend-card">
+          <h3>${escapeHtml(item.label)}</h3>
+          <p>${escapeHtml(item.description)}</p>
+        </article>
+      `
+    )
     .join("");
 }
 
@@ -91,6 +160,13 @@ function renderCaseFiles(caseFiles) {
             <span class="tag">${escapeHtml(item.currentTier)}</span>
             <span class="tag">${escapeHtml(item.signal)}</span>
             <span class="tag">${escapeHtml(item.status)}</span>
+          </div>
+
+          <div class="provenance">
+            <div class="provenance-row"><strong>Lean module:</strong> <code>${escapeHtml(item.modulePath)}</code></div>
+            <div class="provenance-row"><strong>Theorem anchors:</strong> ${escapeHtml(item.theoremAnchors.join(", "))}</div>
+            <div class="provenance-row"><strong>Proof status:</strong> ${escapeHtml(item.proofStatus)}</div>
+            <div class="provenance-row"><strong>Reading:</strong> ${escapeHtml(item.readingMode)}</div>
           </div>
 
           <div class="card-block">
@@ -136,17 +212,34 @@ function renderLedger(entries) {
 
 function renderAttacks(attacks) {
   const container = document.querySelector("#attacks");
-  container.innerHTML = attacks
-    .map(
-      (attack) => `
-        <article class="attack-card">
-          <span class="priority">${escapeHtml(attack.priority)}</span>
-          <h3>${escapeHtml(attack.title)}</h3>
-          <p>${escapeHtml(attack.description)}</p>
-        </article>
-      `
-    )
-    .join("");
+  container.innerHTML = `
+    <table class="attack-table">
+      <thead>
+        <tr>
+          <th>Attack</th>
+          <th>Expected value</th>
+          <th>Difficulty</th>
+          <th>Hidden-assumption potential</th>
+          <th>Why it matters</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${attacks
+          .map(
+            (attack) => `
+              <tr>
+                <td>${escapeHtml(attack.title)}</td>
+                <td>${escapeHtml(attack.expectedValue)}</td>
+                <td>${escapeHtml(attack.difficulty)}</td>
+                <td>${escapeHtml(attack.hiddenAssumptionPotential)}</td>
+                <td>${escapeHtml(attack.description)}</td>
+              </tr>
+            `
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
 }
 
 function renderTools(tools) {
