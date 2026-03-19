@@ -61,6 +61,30 @@ which together push beyond "game theory as ominous hand-waving" and toward actua
 
 This is still an active frontier, but it is no longer accurate to describe the area as merely notional.
 
+## Flagship Result: Timeless Decision Theory
+
+The most significant finding in the project so far concerns Timeless Decision Theory (TDT), the decision-theoretic framework that Yudkowsky developed and that Harry uses throughout HPMOR. TDT was published as a [MIRI working paper](https://intelligence.org/files/TDT.pdf) in 2010 but has never appeared in a peer-reviewed journal. The LessWrong community has debated TDT vs CDT vs EDT informally for over 15 years without resolution.
+
+We settled a chunk of it with machine-checked proofs.
+
+**What we proved** ([`HpmorFormalized/DecisionTheory/TDT.lean`](HpmorFormalized/DecisionTheory/TDT.lean)):
+
+1. **In Newcomb's Problem, TDT = EDT.** The expected utility functions are *literally identical* — same formula, different vocabulary. (`tdt_equals_edt_in_newcomb`)
+
+2. **In the Smoking Lesion Problem, TDT ≠ EDT.** TDT recommends smoking (the gene is already determined), EDT recommends not smoking (smoking is evidence of cancer). Opposite recommendations, both machine-checked. (`opposite_recommendations_smoking_lesion`)
+
+3. **Logical counterfactuals are provably underdetermined.** Multiple consistent "logical counterfactual" functions exist that satisfy TDT's stated constraints but give different answers. TDT cannot make unique predictions without additional axioms. (`logical_counterfactual_underdetermined`)
+
+**What this means:**
+
+TDT is a genuine intermediate theory — it agrees with EDT where EDT is right (Newcomb) and with CDT where CDT is right (Smoking Lesion). It is not redundant. But it requires knowing the *causal structure* of the problem upfront: is the action-state correlation algorithmic (Newcomb-like) or common-cause (Smoking Lesion-like)? This causal-structure input is a hidden assumption that HPMOR never makes explicit.
+
+Harry gets the right answers throughout the book. But the framework he thinks he is using is not a new theory — it is a *synthesis* of existing theories that requires empirical judgment about which type of correlation you are facing. The real contribution is the observation, not the formalism.
+
+We initially proved TDT collapses into EDT (finding #14 v1). Then we tested the one case where it might not — and it didn't. Then we corrected the finding. This is the methodology working as designed: state a prediction, formalize, update when you're wrong.
+
+The full set of findings (14 so far) is tracked in [ROADMAP.md](ROADMAP.md).
+
 ## Why This Exists
 
 Because HPMOR is full of claims that invite escalation.
