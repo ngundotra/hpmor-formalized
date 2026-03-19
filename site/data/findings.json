@@ -5,9 +5,9 @@
     "sourceOfTruth": "ROADMAP.md",
     "syncPolicy": "This site mirrors ROADMAP.md by hand. If they disagree, ROADMAP.md wins.",
     "repoStats": {
-      "modules": "10",
-      "theorems": "40+",
-      "tier3Findings": "7",
+      "modules": "23",
+      "theorems": "323",
+      "trackedFindings": "16",
       "sorries": "0"
     },
     "summaryChips": [
@@ -298,6 +298,156 @@
         "Shapley or coalition analysis for the Harry-Draco-Hermione setting",
         "Formal final-exam strategy analysis under incomplete information"
       ]
+    },
+    {
+      "module": "TimeTravel / NPOracle",
+      "title": "Novikov self-consistency does not hand you an NP oracle for free",
+      "verdict": "Solid",
+      "currentTier": "Tier 3",
+      "signal": "Selection principle problem made explicit",
+      "status": "Multiple fixed points characterized; trivial loop obstruction proven",
+      "badge": "proved",
+      "badgeStyle": "proved",
+      "modulePath": "HpmorFormalized/TimeTravel/NPOracle.lean",
+      "moduleLine": 1,
+      "theoremAnchors": [
+        "trivial_fixpoint_always_available",
+        "np_oracle_scheme_fails"
+      ],
+      "theoremLinks": [
+        { "label": "trivial_fixpoint_always_available", "line": 196 },
+        { "label": "np_oracle_scheme_fails", "line": 319 }
+      ],
+      "proofStatus": "Selection obstruction formalized over arbitrary NP problems",
+      "readingMode": "Faithful theorem plus impossibility insight",
+      "hpmorClaim": "A self-consistent time loop could be used to solve hard search problems by sending answers backward in time.",
+      "whatSurvived": "The useful-loop idea is coherent enough to model, and self-consistency really does permit nontrivial fixed points when a solution exists.",
+      "whatRealityObjectedTo": "The universe is not obliged to choose the interesting fixed point. The always-available 'do nothing' loop is just as self-consistent, so self-consistency alone does not yield computation.",
+      "nextPressurePoints": [
+        "Investigate fixed-point selection principles beyond mere consistency",
+        "Compare Novikov-style selection with Deutsch-style CTC models",
+        "Characterize when nontrivial selectors can be justified physically rather than stipulated"
+      ]
+    },
+    {
+      "module": "Bayes / ConfirmationBias",
+      "title": "Confirmation bias is not universally irrational; it depends on the prior over hypotheses",
+      "verdict": "Solid",
+      "currentTier": "Tier 3",
+      "signal": "Direct correction to a standard rationalist slogan",
+      "status": "Prior-dependent testing result proven",
+      "badge": "proved",
+      "badgeStyle": "proved",
+      "modulePath": "HpmorFormalized/Bayes/ConfirmationBias.lean",
+      "moduleLine": 1,
+      "theoremAnchors": [
+        "confirmation_bias_prior_dependent",
+        "hpmor_ch8_needs_qualification"
+      ],
+      "theoremLinks": [
+        { "label": "confirmation_bias_prior_dependent", "line": 261 },
+        { "label": "hpmor_ch8_needs_qualification", "line": 336 }
+      ],
+      "proofStatus": "General prior-dependence theorem and HPMOR qualification result both proven",
+      "readingMode": "Faithful theorem plus overgeneralization check",
+      "hpmorClaim": "Testing positive examples is irrational; you should try to disconfirm rather than confirm.",
+      "whatSurvived": "In Wason-style broad-rule settings, Harry's advice survives and negative tests are genuinely more informative.",
+      "whatRealityObjectedTo": "The universal version fails. Under narrow-hypothesis priors, positive testing can be the Bayesian-optimal move.",
+      "nextPressurePoints": [
+        "Characterize the exact prior families where positive testing dominates",
+        "Expose the crossover point between narrow-rule and broad-rule regimes",
+        "Relate the formal result to human experimental design under limited samples"
+      ]
+    },
+    {
+      "module": "Physics / Conservation",
+      "title": "Breaking energy conservation is not the same thing as breaking all of physics",
+      "verdict": "Solid",
+      "currentTier": "Tier 3",
+      "signal": "Sharp correction to a too-fast inference in the text",
+      "status": "Selective conservation-violation result proven",
+      "badge": "proved",
+      "badgeStyle": "proved",
+      "modulePath": "HpmorFormalized/Physics/Conservation.lean",
+      "moduleLine": 1,
+      "theoremAnchors": [
+        "magic_can_preserve_other_quantity",
+        "magic_selective_violation"
+      ],
+      "theoremLinks": [
+        { "label": "magic_can_preserve_other_quantity", "line": 179 },
+        { "label": "magic_selective_violation", "line": 201 }
+      ],
+      "proofStatus": "Selective symmetry/conservation story formalized",
+      "readingMode": "Faithful theorem plus conceptual correction",
+      "hpmorClaim": "If magic violates conservation of energy, then magic is violating physics in a global sense.",
+      "whatSurvived": "Harry is right that ordinary energy conservation can fail under magic.",
+      "whatRealityObjectedTo": "The stronger leap does not survive. One broken conservation law does not imply the absence of all conserved quantities or all symmetry structure.",
+      "nextPressurePoints": [
+        "Connect the discrete model more tightly to Noether-style reasoning",
+        "Ask what modified conserved quantity magic could preserve",
+        "Formalize minimal symmetry assumptions needed for alternate conservation"
+      ]
+    },
+    {
+      "module": "Logic / Occlumency",
+      "title": "Perfect mind-shielding either requires perfect simulation or weaker security goals",
+      "verdict": "Qualified",
+      "currentTier": "Tier 2-3",
+      "signal": "Cryptographic distinction made explicit",
+      "status": "Information-theoretic and computational notions separated",
+      "badge": "qualified",
+      "badgeStyle": "qualified",
+      "modulePath": "HpmorFormalized/Logic/Occlumency.lean",
+      "moduleLine": 1,
+      "theoremAnchors": [
+        "perfect_occlumency_requires_equality",
+        "simulation_paradox"
+      ],
+      "theoremLinks": [
+        { "label": "perfect_occlumency_requires_equality", "line": 118 },
+        { "label": "simulation_paradox", "line": 236 }
+      ],
+      "proofStatus": "Security hierarchy and perfect-simulation obstruction formalized",
+      "readingMode": "Qualified theorem with modeling hierarchy",
+      "hpmorClaim": "An Occlumens can simply clear their mind or hide their real state from a Legilimens.",
+      "whatSurvived": "We can cleanly distinguish weaker computationally bounded protection from stronger information-theoretic protection.",
+      "whatRealityObjectedTo": "Perfect shielding is much harsher than the prose suggests: if you want perfect indistinguishability, the fake state must match the real distribution exactly.",
+      "nextPressurePoints": [
+        "Connect the model to zero-knowledge style guarantees",
+        "Study partial leakage rather than perfect concealment",
+        "Relate Legilimency power to computational hardness assumptions"
+      ]
+    },
+    {
+      "module": "GameTheory / HawkDove",
+      "title": "Reputation makes dominance contests twice as fragile as naive intuition predicts",
+      "verdict": "Solid",
+      "currentTier": "Tier 3",
+      "signal": "Quantitative surprise with immediate narrative application",
+      "status": "Reputation threshold and phase transition proven",
+      "badge": "proved",
+      "badgeStyle": "proved",
+      "modulePath": "HpmorFormalized/GameTheory/HawkDove.lean",
+      "moduleLine": 1,
+      "theoremAnchors": [
+        "phase_transition",
+        "slytherin_all_hawk_example"
+      ],
+      "theoremLinks": [
+        { "label": "phase_transition", "line": 351 },
+        { "label": "slytherin_all_hawk_example", "line": 404 }
+      ],
+      "proofStatus": "Reputation-amplified Hawk-Dove threshold theorem proven",
+      "readingMode": "Faithful theorem with in-world interpretation",
+      "hpmorClaim": "Slytherin-style status competition can trap a group in systematically aggressive behavior.",
+      "whatSurvived": "The model supports the broad intuition that reputation pushes the equilibrium toward more aggression.",
+      "whatRealityObjectedTo": "The stronger result is quantitative and non-obvious: reputation helps hawks twice, halving the stability margin and making all-Hawk collapse arrive earlier than naive reasoning predicts.",
+      "nextPressurePoints": [
+        "Extend to asymmetric-status players",
+        "Test whether hierarchy stabilizes or worsens the collapse",
+        "Compare with signal-ambiguity and coalition effects in the social landscape"
+      ]
     }
   ],
   "hiddenAssumptions": [
@@ -320,6 +470,22 @@
     {
       "title": "Credible-threat talk requires an actual equilibrium concept",
       "description": "If a threat is supposed to be rational when the moment arrives, then someone eventually has to write down the equilibrium concept. Plain Nash equilibrium is usually too weak for the threats HPMOR likes to brandish."
+    },
+    {
+      "title": "Self-consistency does not select the useful fixed point",
+      "description": "Time-travel computation needs more than the existence of a loop. The trivial loop is always available unless a separate selection principle rules it out."
+    },
+    {
+      "title": "Perfect shielding is much stronger than merely looking calm",
+      "description": "Occlumency only becomes information-theoretically secure if the fake state is distributed exactly like the real one; otherwise the best you can hope for is a weaker, bounded notion of deception."
+    },
+    {
+      "title": "The irrationality of confirmation bias depends on what hypotheses you thought were plausible in the first place",
+      "description": "The anti-confirmation-bias lesson survives in the Wason setting, but not as a universal theorem. Priors over hypothesis space do real work."
+    },
+    {
+      "title": "Violating one symmetry is not the same thing as abolishing all structure",
+      "description": "Magic can break energy conservation while preserving some other quantity. 'Violates physics' is too blunt unless the symmetry claim is specified."
     }
   ],
   "nextAttacks": [

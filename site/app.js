@@ -39,19 +39,19 @@ function renderDashboard(siteData) {
 
   const stats = [
     {
-      label: "Modules",
+      label: "Imported Modules",
       value: escapeHtml(siteData.meta.repoStats.modules),
-      blurb: "Imported modules currently in the formalization library.",
+      blurb: "Lean modules currently imported into the library root.",
     },
     {
-      label: "Theorems",
+      label: "Declarations",
       value: escapeHtml(siteData.meta.repoStats.theorems),
-      blurb: "Approximate theorem count recorded in the roadmap.",
+      blurb: "Current theorem + lemma declarations across the codebase.",
     },
     {
-      label: "Tier 3 Findings",
-      value: escapeHtml(siteData.meta.repoStats.tier3Findings),
-      blurb: "Findings that actually changed what the informal story seemed to imply.",
+      label: "Tracked Findings",
+      value: escapeHtml(siteData.meta.repoStats.trackedFindings),
+      blurb: "Findings currently summarized in the roadmap table.",
     },
     {
       label: "Current Split",
