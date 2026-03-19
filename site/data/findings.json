@@ -16,6 +16,8 @@
       "The page is optimized for readers who care what the math forced us to admit",
       "The goal is not task tracking. The goal is epistemic damage assessment."
     ],
+    "thesisLine": "Formalization changed several headline claims in the book: some survive intact, some require hidden assumptions, and some only work in narrower settings than the prose suggests.",
+    "coverageNote": "Featured findings and roadmap-linked cards are synced to ROADMAP.md. Additional case files may surface newer proof fronts from the current codebase before the roadmap summary text catches up.",
     "whyItMatters": [
       {
         "title": "This is not fan commentary",
@@ -55,9 +57,12 @@
     "featuredFindings": [
       {
         "module": "DecisionTheory / ExistentialRisk",
+        "rank": "1",
         "title": "Standard expected utility self-destructs under existential risk",
         "badge": "proved",
         "badgeStyle": "proved",
+        "findingKind": "major correction",
+        "roadmapLine": 19,
         "modulePath": "HpmorFormalized/DecisionTheory/ExistentialRisk.lean",
         "moduleLine": 1,
         "theoremLinks": [
@@ -66,13 +71,16 @@
         ],
         "summary": "Harry's stated expected-utility reasoning gives the right emotional emphasis but the wrong formal framework: if every action carries some chance of annihilation, standard EU collapses and cannot discriminate between them.",
         "whyItMatters": "This is the cleanest example of formalization changing the theory rather than merely polishing it. The natural fix looks lexicographic, not ordinary expected utility.",
-        "leanSnippet": "theorem eu_indiscriminate\\n    {p₁ p₂ : ℝ} (hp₁ : 0 < p₁) (hp₁' : p₁ < 1) (hp₂ : 0 < p₂) (hp₂' : p₂ < 1)\\n    (u₁ u₂ : EReal) :\\n    binary_eu p₁ u₁ ⊥ = binary_eu p₂ u₂ ⊥ := by\\n  rw [eu_bot_of_pos_prob hp₁ hp₁', eu_bot_of_pos_prob hp₂ hp₂']\\n\\ntheorem lexicographic_discriminates\\n    (a b : LexAction) (h : a.survivalProb < b.survivalProb) :\\n    a.lexLe b ∧ ¬ b.lexLe a := by\\n  constructor\\n  · left; exact h\\n  · intro hba\\n    cases hba with\\n    | inl hlt => linarith\\n    | inr heq => linarith [heq.1]"
+        "snippetPath": "./data/snippets/existential-risk.lean"
       },
       {
         "module": "DecisionTheory / TDT",
+        "rank": "2",
         "title": "TDT survives neither deflation nor coronation; it survives as an underdetermined intermediate theory",
         "badge": "proved",
         "badgeStyle": "proved",
+        "findingKind": "hidden assumption",
+        "roadmapLine": 33,
         "modulePath": "HpmorFormalized/DecisionTheory/TDT.lean",
         "moduleLine": 1,
         "theoremLinks": [
@@ -81,13 +89,16 @@
         ],
         "summary": "Formalization does not let TDT remain a vague aura of superiority. It shows both that TDT needs extra structure to define logical counterfactuals and that it still differs from EDT in the smoking lesion.",
         "whyItMatters": "For EA/LW readers this is high-value because it upgrades the conversation from rhetoric about 'choosing the output of the algorithm' to an actual question about what extra machinery the theory requires.",
-        "leanSnippet": "theorem logical_counterfactual_underdetermined\\n    {Action State : Type}\\n    (actual : Action) (other : Action) (_h : actual ≠ other)\\n    (trueProb : State → ℝ)\\n    (lcf₁ lcf₂ : LogicalCounterfactual Action State)\\n    (h₁ : lcf₁ actual actual = trueProb)\\n    (h₂ : lcf₂ actual actual = trueProb)\\n    (hdiff : lcf₁ actual other ≠ lcf₂ actual other) :\\n    lcf₁ actual actual = lcf₂ actual actual ∧\\n    lcf₁ actual other ≠ lcf₂ actual other := by\\n  exact ⟨by rw [h₁, h₂], hdiff⟩\\n\\ntheorem tdt_neq_edt_smoking_lesion :\\n    tdtExpectedUtility (smokingLesionProblem 10 100) (smokingTDTProb 0.5)\\n      smoke healthStates ≠\\n    edtExpectedUtility (smokingLesionProblem 10 100) (smokingEDTProb 0.9 0.1)\\n      smoke healthStates := by\\n  simp only [tdtExpectedUtility, edtExpectedUtility, smokingLesionProblem,\\n    smokingTDTProb, smokingEDTProb, healthStates,\\n    List.map, List.sum_cons, List.sum_nil]\\n  norm_num"
+        "snippetPath": "./data/snippets/tdt.lean"
       },
       {
         "module": "DecisionTheory / TabooTradeoffs",
+        "rank": "3",
         "title": "Sacred values are not irrational in general; they are only squeezed out on finite choice sets",
         "badge": "qualified",
         "badgeStyle": "qualified",
+        "findingKind": "useful qualification",
+        "roadmapLine": 24,
         "modulePath": "HpmorFormalized/DecisionTheory/TabooTradeoffs.lean",
         "moduleLine": 1,
         "theoremLinks": [
@@ -96,7 +107,7 @@
         ],
         "summary": "Harry's anti-taboo-tradeoff line works on finite menus, but not in full generality. Lexicographic preferences can be rational and money-pump safe while refusing ordinary tradeoffs.",
         "whyItMatters": "This is the sort of correction a rationalist audience should want: the original argument remains useful in practical bounded settings, but not as a universal philosophical law.",
-        "leanSnippet": "theorem lex_rational : lexPref.isRational :=\\n  ⟨lex_complete, lex_transitive⟩\\n\\ntheorem lex_no_money_pump : ¬ hasMoneyPumpCycle lexPref :=\\n  rational_no_money_pump lexPref lex_rational\\n\\ntheorem finite_tradeoff_exists [Fintype α] [DecidableEq α]\\n    (r : PreferenceRelation α)\\n    (hdec : ∀ x y, Decidable (r.pref x y))\\n    (hr : r.isRational)\\n    (x y : α) (hxy : r.strictPref x y) :\\n    ∃ u : α → ℝ, u x > u y := by\\n  let filt : α → Finset α := fun a => @Finset.filter _ (fun z => r.pref a z) (hdec a) Finset.univ\\n  let u : α → ℝ := fun a => (filt a).card\\n  use u"
+        "snippetPath": "./data/snippets/taboo-tradeoffs.lean"
       }
     ],
     "legend": [
@@ -128,6 +139,8 @@
       "status": "Proven, with real mathematical content",
       "badge": "proved",
       "badgeStyle": "proved",
+      "findingKind": "theorem",
+      "roadmapLine": 41,
       "modulePath": "HpmorFormalized/TimeTravel/Novikov.lean",
       "moduleLine": 1,
       "theoremAnchors": [
@@ -158,6 +171,8 @@
       "status": "Rebuilt with general acyclicity and topological ordering",
       "badge": "qualified",
       "badgeStyle": "qualified",
+      "findingKind": "model warning",
+      "roadmapLine": 46,
       "modulePath": "HpmorFormalized/TimeTravel/CausalDAG.lean",
       "moduleLine": 1,
       "theoremAnchors": [
@@ -188,6 +203,8 @@
       "status": "General fixed-point theorems with HPMOR illustration preserved",
       "badge": "proved",
       "badgeStyle": "proved",
+      "findingKind": "theorem",
+      "roadmapLine": 51,
       "modulePath": "HpmorFormalized/TimeTravel/Paradox.lean",
       "moduleLine": 1,
       "theoremAnchors": [
@@ -218,6 +235,8 @@
       "status": "All 8 theorems proven",
       "badge": "proved",
       "badgeStyle": "proved",
+      "findingKind": "theorem",
+      "roadmapLine": 58,
       "modulePath": "HpmorFormalized/Bayes/Basic.lean",
       "moduleLine": 1,
       "theoremAnchors": [
@@ -248,6 +267,8 @@
       "status": "Stackelberg, precommitment, and existential-risk results all landed",
       "badge": "qualified",
       "badgeStyle": "qualified",
+      "findingKind": "qualified theorem",
+      "roadmapLine": 67,
       "modulePath": "HpmorFormalized/DecisionTheory/Basic.lean",
       "moduleLine": 1,
       "theoremAnchors": [
@@ -278,6 +299,8 @@
       "status": "Aumann, Iterated PD, and FinalExam results all landed",
       "badge": "proved",
       "badgeStyle": "proved",
+      "findingKind": "theorem family",
+      "roadmapLine": 75,
       "modulePath": "HpmorFormalized/GameTheory/Aumann.lean",
       "moduleLine": 1,
       "theoremAnchors": [
@@ -308,6 +331,8 @@
       "status": "Multiple fixed points characterized; trivial loop obstruction proven",
       "badge": "proved",
       "badgeStyle": "proved",
+      "findingKind": "impossibility result",
+      "roadmapLine": 28,
       "modulePath": "HpmorFormalized/TimeTravel/NPOracle.lean",
       "moduleLine": 1,
       "theoremAnchors": [
@@ -338,6 +363,8 @@
       "status": "Prior-dependent testing result proven",
       "badge": "proved",
       "badgeStyle": "proved",
+      "findingKind": "major correction",
+      "roadmapLine": 32,
       "modulePath": "HpmorFormalized/Bayes/ConfirmationBias.lean",
       "moduleLine": 1,
       "theoremAnchors": [
@@ -368,6 +395,8 @@
       "status": "Selective conservation-violation result proven",
       "badge": "proved",
       "badgeStyle": "proved",
+      "findingKind": "major correction",
+      "roadmapLine": 27,
       "modulePath": "HpmorFormalized/Physics/Conservation.lean",
       "moduleLine": 1,
       "theoremAnchors": [
@@ -398,6 +427,8 @@
       "status": "Information-theoretic and computational notions separated",
       "badge": "qualified",
       "badgeStyle": "qualified",
+      "findingKind": "model warning",
+      "roadmapLine": 26,
       "modulePath": "HpmorFormalized/Logic/Occlumency.lean",
       "moduleLine": 1,
       "theoremAnchors": [
@@ -428,6 +459,8 @@
       "status": "Reputation threshold and phase transition proven",
       "badge": "proved",
       "badgeStyle": "proved",
+      "findingKind": "theorem",
+      "roadmapLine": 31,
       "modulePath": "HpmorFormalized/GameTheory/HawkDove.lean",
       "moduleLine": 1,
       "theoremAnchors": [

@@ -161,6 +161,7 @@ h3 {
 .dashboard-grid,
 .case-grid,
 .featured-grid,
+.thesis-grid,
 .why-grid,
 .legend-grid,
 .tool-grid {
@@ -174,6 +175,10 @@ h3 {
 
 .featured-grid {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.thesis-grid {
+  grid-template-columns: 1.4fr 1fr;
 }
 
 .summary-strip {
@@ -231,6 +236,39 @@ h3 {
 .featured-card {
   display: grid;
   gap: 1rem;
+}
+
+.thesis-card,
+.sync-card {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255, 253, 249, 0.92);
+  padding: 1.2rem;
+}
+
+.thesis-card p,
+.sync-card p {
+  margin: 0;
+}
+
+.thesis-line {
+  font-family: var(--headline);
+  font-size: 1.5rem;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.featured-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 0.82rem;
 }
 
 .why-grid,
@@ -443,6 +481,18 @@ h3 {
   font-size: 0.86rem;
 }
 
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.roadmap-link {
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
 .viewer {
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -512,6 +562,10 @@ a {
   .section {
     border-radius: 22px;
     padding: 1.4rem;
+  }
+
+  .thesis-grid {
+    grid-template-columns: 1fr;
   }
 
   .takeaway-table,

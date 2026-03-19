@@ -19,6 +19,7 @@ document.querySelector("#source-note").textContent =
   `Source of truth: ${data.meta.sourceOfTruth}`;
 document.querySelector("#sync-note").textContent = data.meta.syncPolicy;
 
+renderThesis(data.meta);
 renderFeaturedFindings(data.meta.featuredFindings);
 renderDashboard(data);
 renderSummary(data);
@@ -94,17 +95,24 @@ function renderFeaturedFindings(items) {
         <article class="featured-card">
           <div class="card-top">
             <div>
+              <div class="meta-row">
+                <span class="featured-rank">${escapeHtml(item.rank)}</span>
+                <span class="status-badge ${statusClass[item.badgeStyle] || ""}">
+                  ${escapeHtml(item.badge)}
+                </span>
+                <span class="tag">${escapeHtml(item.findingKind)}</span>
+              </div>
               <p class="section-kicker">${escapeHtml(item.module)}</p>
               <h3>${escapeHtml(item.title)}</h3>
             </div>
-            <span class="status-badge ${statusClass[item.badgeStyle] || ""}">
-              ${escapeHtml(item.badge)}
-            </span>
           </div>
           <p>${escapeHtml(item.summary)}</p>
           <div class="card-block">
             <h4>Why it matters</h4>
             <p>${escapeHtml(item.whyItMatters)}</p>
+          </div>
+          <div class="roadmap-link">
+            <a href="${escapeHtml(roadmapLine(item.roadmapLine))}" target="_blank" rel="noreferrer">Roadmap entry</a>
           </div>
           <div class="link-list">
             <a class="proof-link" href="${escapeHtml(githubBlob(item.modulePath, item.moduleLine))}" target="_blank" rel="noreferrer">Module</a>
@@ -115,14 +123,27 @@ function renderFeaturedFindings(items) {
               )
               .join("")}
           </div>
-          <details class="viewer">
+          <details class="viewer" data-snippet-path="${escapeHtml(item.snippetPath)}">
             <summary>View Lean excerpt</summary>
-            <pre><code>${escapeHtml(item.leanSnippet)}</code></pre>
+            <pre><code>Loading excerpt...</code></pre>
           </details>
         </article>
       `
     )
     .join("");
+  hydrateSnippets();
+}
+
+function renderThesis(meta) {
+  const container = document.querySelector("#thesis");
+  container.innerHTML = `
+    <article class="thesis-card">
+      <p class="thesis-line">${escapeHtml(meta.thesisLine)}</p>
+    </article>
+    <article class="sync-card">
+      <p><strong>Coverage note:</strong> ${escapeHtml(meta.coverageNote)}</p>
+    </article>
+  `;
 }
 
 function renderSummary(siteData) {
@@ -206,11 +227,10 @@ function renderCaseFiles(caseFiles) {
 
           <div class="card-meta">
             <span class="tag">${escapeHtml(item.currentTier)}</span>
-            <span class="tag">${escapeHtml(item.signal)}</span>
-            <span class="tag">${escapeHtml(item.status)}</span>
             <span class="status-badge ${statusClass[item.badgeStyle] || ""}">
               ${escapeHtml(item.badge)}
             </span>
+            <span class="tag">${escapeHtml(item.findingKind)}</span>
           </div>
 
           <div class="provenance">
@@ -222,7 +242,7 @@ function renderCaseFiles(caseFiles) {
               )
               .join(", ")}</div>
             <div class="provenance-row"><strong>Proof status:</strong> ${escapeHtml(item.proofStatus)}</div>
-            <div class="provenance-row"><strong>Reading:</strong> ${escapeHtml(item.readingMode)}</div>
+            <div class="provenance-row"><strong>Roadmap:</strong> <a href="${escapeHtml(roadmapLine(item.roadmapLine))}" target="_blank" rel="noreferrer">entry at line ${escapeHtml(item.roadmapLine)}</a></div>
           </div>
 
           <div class="card-block">
@@ -315,6 +335,26 @@ function renderTools(tools) {
 
 function githubBlob(path, line = 1) {
   return `${repoBaseUrl}${path}#L${line}`;
+}
+
+function roadmapLine(line) {
+  return `${repoBaseUrl}ROADMAP.md#L${line}`;
+}
+
+async function hydrateSnippets() {
+  const viewers = document.querySelectorAll("[data-snippet-path]");
+  await Promise.all(
+    [...viewers].map(async (viewer) => {
+      const path = viewer.getAttribute("data-snippet-path");
+      const code = viewer.querySelector("code");
+      try {
+        const response = await fetch(path);
+        code.textContent = await response.text();
+      } catch {
+        code.textContent = "Excerpt unavailable. Use the theorem links above.";
+      }
+    })
+  );
 }
 
 function countBy(items, key) {
