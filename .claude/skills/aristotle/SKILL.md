@@ -2,7 +2,7 @@
 name: aristotle
 description: |
   Submit a Lean proof goal to Harmonic's Aristotle autoformalization service.
-  Use when you want to auto-prove a theorem, fill a sorry, or formalize a
+  Use when you want to auto-prove a theorem, strengthen an existing result, or formalize a
   natural language claim into Lean 4.
 argument-hint: "<proof goal or theorem description>"
 user-invocable: true
@@ -17,7 +17,7 @@ Submit a proof goal to Aristotle for autoformalization.
 
 ```
 /aristotle Prove that the Bayesian posterior is bounded above by 1
-/aristotle Fill the sorry in posterior_tendsto_one in Bayes/Basic.lean
+/aristotle Strengthen the Bayes module by proving a quantitative convergence bound
 ```
 
 ## Process
@@ -32,7 +32,7 @@ Submit a proof goal to Aristotle for autoformalization.
 
 3. Submit to Aristotle:
    ```bash
-   source ~/.zshrc && uv run aristotle submit "$ARGUMENTS" --project-dir /home/ngundotra/Documents/hpmor-formalized
+   source ~/.zshrc && uv run aristotle submit "$ARGUMENTS" --project-dir .
    ```
 
 4. Report the project ID to the user so they can check on it later:
@@ -42,7 +42,7 @@ Submit a proof goal to Aristotle for autoformalization.
 
 5. If the user wants to wait, use `--wait --destination /tmp/aristotle-output`:
    ```bash
-   source ~/.zshrc && uv run aristotle submit "$ARGUMENTS" --project-dir /home/ngundotra/Documents/hpmor-formalized --wait --destination /tmp/aristotle-output
+   source ~/.zshrc && uv run aristotle submit "$ARGUMENTS" --project-dir . --wait --destination /tmp/aristotle-output
    ```
 
 ## Checking results later

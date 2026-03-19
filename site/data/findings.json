@@ -1,0 +1,177 @@
+{
+  "meta": {
+    "title": "HPMOR Findings Map",
+    "sourceOfTruth": "ROADMAP.md",
+    "syncPolicy": "This site mirrors ROADMAP.md by hand. If they disagree, ROADMAP.md wins.",
+    "summaryChips": [
+      "Some claims survived formalization with dignity intact",
+      "Some required assumptions the prose neglected to confess",
+      "Some turned out to be examples wearing the costume of theorems",
+      "The goal is not task tracking. The goal is epistemic damage assessment."
+    ]
+  },
+  "caseFiles": [
+    {
+      "module": "TimeTravel / Novikov",
+      "title": "Time travel, regrettably, still has to be mathematically consistent",
+      "verdict": "Solid",
+      "currentTier": "Tier 2",
+      "signal": "Strongest work in the repo",
+      "status": "Proven, with real mathematical content",
+      "hpmorClaim": "A deterministic time loop cannot produce arbitrary paradox; on a finite state space it must settle into a self-consistent cycle.",
+      "whatSurvived": "The periodic-orbit theorem survived translation. The result is general, falsifiable, and recognizably the HPMOR claim rather than a decorative approximation of it.",
+      "whatRealityObjectedTo": "Reality was cooperative but not indulgent. The current file still stops short of tight period bounds and a cleaner reduction to known fixed-point theory.",
+      "nextPressurePoints": [
+        "Prove tight bounds on the minimal period",
+        "Identify the exact algebraic structure behind the result",
+        "Connect the theorem to standard fixed-point machinery"
+      ]
+    },
+    {
+      "module": "TimeTravel / DAG model",
+      "title": "Drawing arrows from past to future is not the same as earning a causal theorem",
+      "verdict": "Qualified",
+      "currentTier": "Tier 1",
+      "signal": "Useful but too polite",
+      "status": "Partly faithful, structurally weak",
+      "hpmorClaim": "Acyclic causal structure should guarantee paradox-free histories.",
+      "whatSurvived": "The basic intuition survives: causal loops are bad, topological structure matters, and consistency arguments should proceed in causal order rather than by wishful thinking.",
+      "whatRealityObjectedTo": "The old DAG setup smuggles in acyclicity through the indexing scheme, which means several theorems are true for reasons too cheap to be interesting. The linear-history result is also narrower than the prose would like.",
+      "nextPressurePoints": [
+        "Model acyclicity via transitive closure instead of the index order",
+        "Prove topological ordering exists in the genuinely non-trivial setting",
+        "Handle multi-cause nodes with explicit merge structure"
+      ]
+    },
+    {
+      "module": "TimeTravel / Paradox",
+      "title": "The universe may cheat to avoid paradox, but our proof currently does so first",
+      "verdict": "Illustrative",
+      "currentTier": "Tier 1",
+      "signal": "Good demo, not yet a theorem of substance",
+      "status": "Hardcoded toy model",
+      "hpmorClaim": "The universe resolves paradoxes by selecting a self-consistent outcome outside the agent's intended options.",
+      "whatSurvived": "The toy fixed-point story is clear, readable, and machine-checked. It does demonstrate the shape of the intended resolution.",
+      "whatRealityObjectedTo": "Unfortunately, every theorem depends on a handcrafted three-state enum. At present the model illustrates the argument rather than forcing nature to admit the general phenomenon.",
+      "nextPressurePoints": [
+        "Generalize from a fixed enum to arbitrary finite transition systems",
+        "Characterize when fixed points exist and when they are unique",
+        "Replace the current storybook example with a structural theorem"
+      ]
+    },
+    {
+      "module": "Bayes",
+      "title": "Bayes survives contact with Lean, which is more than can be said for many speeches",
+      "verdict": "Qualified",
+      "currentTier": "Tier 1-2",
+      "signal": "Core claim nearly complete",
+      "status": "Definitions and substantive theorem direction in place",
+      "hpmorClaim": "Even an astronomically tiny prior can be overwhelmed by sufficiently strong evidence.",
+      "whatSurvived": "The central update story survives cleanly. Evidence can, in fact, crush prior skepticism, and Lean has been kind enough not to object.",
+      "whatRealityObjectedTo": "The slogan is no longer the interesting part. The real pressure point is quantitative: how fast does the posterior move, and exactly how much evidence buys how much confidence?",
+      "nextPressurePoints": [
+        "Derive explicit convergence rates",
+        "Bound the evidence needed to hit a target posterior",
+        "Translate the theorem into quantitatively interpretable thresholds"
+      ]
+    },
+    {
+      "module": "DecisionTheory",
+      "title": "The prisoner’s dilemma results are correct in the technically unsatisfying way",
+      "verdict": "Illustrative",
+      "currentTier": "Tier 1",
+      "signal": "Stub with honest intent",
+      "status": "Trivial consequences of payoff inequalities",
+      "hpmorClaim": "Precommitment and strategic foresight can change what rational action looks like.",
+      "whatSurvived": "The basic payoff facts are fine. Defection dominates in the vanilla game, and mutual cooperation is better than mutual defection whenever the reward ordering says it is.",
+      "whatRealityObjectedTo": "This is still mostly bookkeeping. The current results do not yet explain equilibrium selection, credible threats, or the actual mechanism by which precommitment changes the game rather than merely sounding impressive.",
+      "nextPressurePoints": [
+        "Formalize iterated prisoner's dilemma with discount factors",
+        "Prove subgame-perfect equilibrium results rather than rhetoric about credibility",
+        "Show precisely when restricting strategy sets improves equilibrium payoff"
+      ]
+    },
+    {
+      "module": "GameTheory",
+      "title": "Game theory is where arguments go to discover what they forgot to assume",
+      "verdict": "Qualified",
+      "currentTier": "Tier 1",
+      "signal": "Highest surprise potential",
+      "status": "Mixed: mostly early, but strategically promising",
+      "hpmorClaim": "Rational agents negotiating under common knowledge and strategic pressure should converge or behave predictably.",
+      "whatSurvived": "Even before the newer proofs landed, this was already the most promising hunting ground for hidden assumptions. It remains the place where formalization is most likely to extract a confession.",
+      "whatRealityObjectedTo": "Game-theoretic prose is unusually prone to contraband: common priors, credibility assumptions, equilibrium concepts, and other premises the story often treats as if they came free with the English language.",
+      "nextPressurePoints": [
+        "Aumann-style agreement results and their assumptions",
+        "Shapley or coalition analysis for the Harry-Draco-Hermione setting",
+        "Formal final-exam strategy analysis under incomplete information"
+      ]
+    }
+  ],
+  "hiddenAssumptions": [
+    {
+      "title": "Aumann needs common priors, not merely smart people talking to each other",
+      "description": "Agreement-theorem reasoning is where reality becomes annoyingly specific. Bayesian convergence is not guaranteed without a shared prior, no matter how intelligent or impeccably Bayesian the participants may be."
+    },
+    {
+      "title": "Acyclic graphs alone do not tell you how to combine multiple causes",
+      "description": "Once an event has more than one direct cause, someone has to say how those causes combine. Acyclicity alone does not perform this labor out of civic virtue."
+    },
+    {
+      "title": "Toy paradox resolutions can illustrate an idea without proving the general phenomenon",
+      "description": "A hand-built example can show what a resolution looks like. It cannot, by itself, establish that the universe is obliged to resolve paradoxes that way in general."
+    },
+    {
+      "title": "Bayesian slogans are easier to prove qualitatively than quantitatively",
+      "description": "It is one thing to say evidence beats a tiny prior. It is another to say how much evidence is needed, how quickly the posterior moves, and whether Harry's dramatic confidence update was numerically justified."
+    },
+    {
+      "title": "Credible-threat talk requires an actual equilibrium concept",
+      "description": "If a threat is supposed to be rational when the moment arrives, then someone eventually has to write down the equilibrium concept. Plain Nash equilibrium is usually too weak for the threats HPMOR likes to brandish."
+    }
+  ],
+  "nextAttacks": [
+    {
+      "priority": "High surprise potential",
+      "title": "Expected utility under existential risk",
+      "description": "Test whether Harry's Dementor-style reasoning survives once utility can effectively hit negative infinity, rather than politely remaining inside the usual textbook range."
+    },
+    {
+      "priority": "High surprise potential",
+      "title": "Iterated prisoner's dilemma / folk theorem",
+      "description": "Replace the atmospheric claim that repetition helps with exact discount-factor thresholds for when cooperation is actually sustainable."
+    },
+    {
+      "priority": "High surprise potential",
+      "title": "Final exam strategy analysis",
+      "description": "Model the final confrontation as an actual game and determine whether Harry was optimal or merely fast-talking in the vicinity of danger."
+    },
+    {
+      "priority": "Medium surprise potential",
+      "title": "Conservation of magic",
+      "description": "Ask what symmetry assumptions would be required for the phrase 'conservation of magic' to mean anything more precise than narrative insistence."
+    },
+    {
+      "priority": "Medium surprise potential",
+      "title": "Interdict of Merlin",
+      "description": "Treat the Interdict as an information channel constraint and compute what capacity limit the story would need in order to stop sounding mystical and start sounding specified."
+    },
+    {
+      "priority": "Medium surprise potential",
+      "title": "Precommitment changes the game",
+      "description": "Pin down the precise conditions under which giving yourself fewer future options is not madness but optimal strategy."
+    }
+  ],
+  "tools": [
+    {
+      "name": "Aristotle (Harmonic)",
+      "result": "Success",
+      "notes": "Used on test claims and Bayesian posterior proofs. It has been genuinely useful, which is to say it occasionally produces code worth the effort of distrusting carefully."
+    },
+    {
+      "name": "Manual + LLM assist",
+      "result": "Success",
+      "notes": "Used for Novikov, the grandfather paradox, and basic definitions. Productive, but still subject to the only policy worth having: every allegedly helpful artifact must survive Lean."
+    }
+  ]
+}

@@ -3,7 +3,7 @@ name: aristotle
 description: |
   Aristotle autoformalization agent. Use this agent to submit Lean proof tasks
   to Harmonic's Aristotle service, check on results, and download completed
-  formalizations. Use when: filling sorry proofs, formalizing new HPMOR claims,
+  formalizations. Use when: strengthening existing proofs, formalizing new HPMOR claims,
   or verifying existing proofs via Aristotle.
 tools: Read, Bash, Grep, Glob, Write, Edit
 model: sonnet
@@ -15,7 +15,7 @@ You help submit Lean 4 proof tasks to Harmonic's Aristotle service and retrieve 
 
 ## Commands
 
-All commands must be run from the project root (`/home/ngundotra/Documents/hpmor-formalized`).
+All commands must be run from the project root.
 Always source `~/.zshrc` before running aristotle to pick up the API key.
 
 ### Submit a proof task
@@ -62,7 +62,7 @@ Add `--wait` to block until the project completes before downloading.
 source ~/.zshrc && uv run aristotle cancel <project-id>
 ```
 
-## Workflow for filling `sorry` proofs
+## Workflow for strengthening an existing proof
 
 1. Read the Lean file to understand the theorem statement and context
 2. Submit the theorem statement as a natural language goal:

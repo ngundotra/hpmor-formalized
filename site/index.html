@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HPMOR Findings Map</title>
+    <meta
+      name="description"
+      content="A GitHub Pages microsite for the hard-won findings extracted from formalizing HPMOR."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <p class="eyebrow">HPMOR Formalization Field Notes</p>
+        <h1>This is not a roadmap. It is a record of where reality refused to cooperate.</h1>
+        <p class="lede">
+          We took claims from <em>Harry Potter and the Methods of Rationality</em>, translated them
+          into definitions and theorems, and then waited for mathematics to object. Sometimes it
+          objected politely. Sometimes it produced a hidden assumption and dropped it on the desk
+          like contraband. This page is the resulting incident log.
+        </p>
+        <div class="hero-meta">
+          <span id="source-note" class="meta-pill"></span>
+          <span id="sync-note" class="meta-pill meta-pill-warn"></span>
+        </div>
+      </header>
+
+      <main>
+        <section class="section">
+          <div class="section-heading">
+            <p class="section-kicker">Dashboard</p>
+            <h2>Findings at a glance</h2>
+          </div>
+          <div id="dashboard" class="dashboard-grid"></div>
+          <div id="summary" class="summary-strip"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-heading">
+            <p class="section-kicker">Case Files</p>
+            <h2>What each attempt extracted from the argument</h2>
+          </div>
+          <div id="case-files" class="case-grid"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-heading">
+            <p class="section-kicker">Ledger</p>
+            <h2>Hidden assumptions extracted under pressure</h2>
+          </div>
+          <div id="ledger" class="ledger-list"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-heading">
+            <p class="section-kicker">Next Attacks</p>
+            <h2>Where additional formalization is most likely to make the story pay rent</h2>
+          </div>
+          <div id="attacks" class="attack-grid"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-heading">
+            <p class="section-kicker">Tools</p>
+            <h2>Autoformalization, or delegated combat with syntax</h2>
+          </div>
+          <div id="tools" class="tool-grid"></div>
+        </section>
+
+        <section class="section source-truth">
+          <div class="section-heading">
+            <p class="section-kicker">Source of Truth</p>
+            <h2>Update policy</h2>
+          </div>
+          <p>
+            This microsite is a presentation layer over the findings currently recorded in the
+            repository's <code>ROADMAP.md</code>. If the site and the markdown file ever disagree,
+            believe the markdown file. It has suffered more.
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
