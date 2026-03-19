@@ -48,6 +48,10 @@ the ones worth your time.
 | "I think it works but I'm not sure what hypotheses I'll need" | Good target — hidden structure likely |
 | "I genuinely don't know if this is true, fixable, or meaningless" | Best target — maximum expected information |
 
+See [HPMOR_CLAIMS.md](HPMOR_CLAIMS.md) for 160+ extracted claims from all
+122 chapters, ranked by Tier 3 potential. Each folder's `README.md` also
+lists forward-looking predictions for the next claims to tackle.
+
 ### State your prediction before you start
 
 Before opening a `.lean` file, write 2-3 sentences in the module docstring

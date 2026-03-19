@@ -54,6 +54,8 @@ Good candidates:
 
 When choosing a claim, **rank by your uncertainty about the outcome**, not by difficulty or importance. If you already know it will verify cleanly, it's bookkeeping. If you genuinely can't predict whether it will confirm, need modification, or turn out to be unmodelable, that's where the findings come from. See the "Choosing What to Formalize" section in [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md) for the full framework.
 
+A comprehensive extraction of 160+ formalizable claims from all 122 chapters is available in [HPMOR_CLAIMS.md](HPMOR_CLAIMS.md), ranked by Tier 3 potential. Start there if you're looking for a target.
+
 Write a `## Prediction` in your module docstring before you start proving anything. This keeps you honest.
 
 ### 3. Improve the exposition
