@@ -22,4 +22,5 @@ import HpmorFormalized.GameTheory.HawkDove
 import HpmorFormalized.GameTheory.MirrorOfErised
 import HpmorFormalized.GameTheory.SignalAmbiguity
 import HpmorFormalized.Physics.Conservation
+import HpmorFormalized.Physics.PartialTransfiguration
 import HpmorFormalized.Logic.Occlumency
