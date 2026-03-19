@@ -6,6 +6,8 @@ Correct.
 
 This repository is for turning HPMOR arguments into definitions, lemmas, theorems, counterexamples, and occasionally the discovery that a dramatic speech was quietly leaning on an assumption nobody bothered to say out loud.
 
+So far, this approach has produced 21 Tier 3 findings — cases where formalization revealed something the informal reasoning missed. These include a machine-checked characterization of TDT, a proof that partial transfiguration doesn't require quantum field theory, and the discovery that Harry's existential risk reasoning secretly uses a different decision theory than the one he names. The findings are tracked in [ROADMAP.md](ROADMAP.md). There are 160+ claims remaining in [HPMOR_CLAIMS.md](HPMOR_CLAIMS.md).
+
 Before you begin, read [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md).
 
 The short version:
@@ -14,7 +16,7 @@ The short version:
 - Tier 2: the formalization must actually resemble the HPMOR claim
 - Tier 3: the formalization should teach us something the story did not make explicit
 
-We are not collecting tautologies. We are interrogating arguments.
+We are not collecting tautologies. We are interrogating arguments. The project's track record suggests this is productive — roughly half the claims we formalized turned out to need qualification, and several were wrong in ways more interesting than being right.
 
 ## Ways to contribute
 

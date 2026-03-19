@@ -1,107 +1,104 @@
 # hpmor-formalized
 
-Or: what happens when Harry James Potter-Evans-Verres acquires a proof assistant and decides that "because it would be embarrassing to be wrong" should scale all the way up to metaphysics.
+A proof assistant walks into a rationality fanfic and starts checking the math.
 
-This project formalizes pieces of [Harry Potter and the Methods of Rationality](https://hpmor.com) in Lean 4. The premise is simple:
+Some of the math checks out. Some of it doesn't. The parts that don't are more interesting.
 
-> If a claim is important enough to base a plan on, it is important enough to try proving.
+This project takes claims from [Harry Potter and the Methods of Rationality](https://hpmor.com) — the ones that sound like they should survive contact with a theorem prover — and runs them through [Lean 4](https://lean-lang.org). The results are machine-checked, human-readable, and occasionally embarrassing for the source material.
 
-So we take bits of HPMOR that sound like they ought to survive contact with mathematics, and we ask Lean to be the stern voice of reality.
+**Current status:** 21 modules, 0 `sorry`s, 21 Tier 3 findings where formalization revealed something the informal reasoning missed.
 
-## What Is In Here?
+---
 
-At the moment, the project is a growing library of formal experiments inspired by Harry's favorite habits:
+## Greatest Hits
 
-- Updating on evidence instead of clinging to priors.
-- Treating game theory as something more than a conversational prop.
-- Refusing to accept time travel unless it can be made to behave itself.
-- Looking at a dramatic claim and asking, "Fine. What are the axioms?"
+Six results where the proof assistant found something nobody had noticed.
 
-Some modules are flagship results. Some are narrower models. All of them are trying, in one way or another, to cash out rationality in the unforgiving currency of type theory.
+### Harry doesn't need quantum field theory
 
-## Current Adventures
+**The claim:** Harry discovers partial transfiguration by realizing matter is continuous quantum fields, not discrete objects (Ch. 28-29). This is the pivotal insight that wins the final exam.
 
-### Time Travel, Unfortunately
+**What we proved:** Harry's insight works, but his explanation is massive overkill. The theorem [`harry_doesnt_need_qft`](HpmorFormalized/Physics/PartialTransfiguration.lean) constructs a finite, 3-element, non-continuous structure that supports partial transfiguration perfectly well. What Harry actually needs isn't physics — it's a single axiom from analytic metaphysics: *unrestricted mereological composition* (any collection of parts is a valid whole). A wizard who understood that axiom could skip quantum field theory entirely.
 
-The strongest part of the project still lives in `TimeTravel`.
+The real dichotomy isn't objects vs. fields. It's restricted composition (only designated wholes are targets) vs. unrestricted composition (any parts are a target).
 
-- [`HpmorFormalized/TimeTravel/Novikov.lean`](HpmorFormalized/TimeTravel/Novikov.lean) formalizes a version of Novikov self-consistency: finite time loops must settle into a paradox-free periodic story.
-- [`HpmorFormalized/TimeTravel/CausalDAG.lean`](HpmorFormalized/TimeTravel/CausalDAG.lean) formalizes causal consistency more seriously, with acyclicity, topological ordering, and conditions under which consistent histories can be propagated.
-- [`HpmorFormalized/TimeTravel/Paradox.lean`](HpmorFormalized/TimeTravel/Paradox.lean) models a toy paradox and gives the universe permission to cheat in exactly the way required to avoid contradiction.
+[Full writeup](HpmorFormalized/Physics/PartialTransfiguration.md)
 
-In other words: the Time-Turner does not get to shrug and create nonsense. The universe is allowed to be strange. It is not allowed to be inconsistent.
+### TDT is real, intermediate, and incomplete
 
-### Bayesian Updates Like a Civilized Person
+**The claim:** Timeless Decision Theory is a novel decision framework that outperforms both CDT and EDT (Ch. 33).
 
-[`HpmorFormalized/Bayes/Basic.lean`](HpmorFormalized/Bayes/Basic.lean) formalizes the classic HPMOR lesson from early chapters: even a tiny prior can be overwhelmed by sufficiently strong evidence.
+**What we proved:** TDT is genuinely intermediate — it agrees with EDT where EDT is right (Newcomb's Problem: [`tdt_equals_edt_in_newcomb`](HpmorFormalized/DecisionTheory/TDT.lean)) and with CDT where CDT is right (Smoking Lesion: [`opposite_recommendations_smoking_lesion`](HpmorFormalized/DecisionTheory/TDT.lean)). It is not redundant. But [`logical_counterfactual_underdetermined`](HpmorFormalized/DecisionTheory/TDT.lean) proves that "logical counterfactuals" — TDT's core concept — are underdetermined: multiple consistent definitions exist, giving different answers, with no way to choose between them. TDT gets the right answers in known problems but can't make unique predictions in novel ones without additional axioms nobody has stated.
 
-McGonagall turns into a cat. Your prior objects. Bayes has no sympathy.
+This is, to our knowledge, the first machine-checked characterization. It settles the structural question that 15 years of informal debate left open.
 
-The core results are now in place. The more interesting question is no longer whether the update works, but what additional quantitative facts we can extract once the theorem is formal.
+We initially proved TDT collapses entirely into EDT (finding v1). Then we tested the Smoking Lesion — and TDT *didn't* collapse there. So we corrected the finding. This is the methodology working as designed.
 
-### Game Theory, Which Was Always Going To Happen
+[Full writeup](HpmorFormalized/DecisionTheory/TDT.md)
 
-[`HpmorFormalized/GameTheory/Aumann.lean`](HpmorFormalized/GameTheory/Aumann.lean) proves Aumann's agreement theorem in a finite setting and, more importantly, exhibits the hidden assumption HPMOR leaves implicit: common priors.
+### Expected utility self-destructs at the end of the world
 
-If Harry and Draco do not start from the same prior, then "rational Bayesians must converge" is not a theorem. It is a mood.
+**The claim:** Any probability of total annihilation times negative infinity utility equals negative infinity, so preventing existential catastrophe trumps everything (Ch. 43-47).
 
-The repo also includes:
+**What we proved:** Harry's calculation is correct and useless. If *every* available action has some nonzero chance of catastrophe, then every action scores negative infinity and the framework can't rank them. Harry's *actual* reasoning secretly uses lexicographic preferences: first minimize annihilation probability, then optimize everything else. That's a different decision theory than what he says he's using. He got the right answer with the wrong framework.
 
-- [`HpmorFormalized/GameTheory/IteratedPD.lean`](HpmorFormalized/GameTheory/IteratedPD.lean)
-- [`HpmorFormalized/GameTheory/FinalExam.lean`](HpmorFormalized/GameTheory/FinalExam.lean)
-- [`HpmorFormalized/GameTheory/Basic.lean`](HpmorFormalized/GameTheory/Basic.lean)
+[Full writeup](HpmorFormalized/DecisionTheory/ExistentialRisk.md)
 
-which together push beyond "game theory as ominous hand-waving" and toward actual strategic claims with assumptions attached.
+### Sacred values can be perfectly rational
 
-### Decision Theory, For Cases Where Being Eaten By Dementors Seems Suboptimal
+**The claim:** Refusing to trade off sacred values is irrational because it lets people money-pump you (Ch. 82).
 
-[`HpmorFormalized/DecisionTheory/Basic.lean`](HpmorFormalized/DecisionTheory/Basic.lean) covers foundational prisoner’s-dilemma and precommitment ideas.
+**What we proved:** Harry is right at the grocery store and wrong in the philosophy seminar. On finite choice sets, yes — complete and transitive preferences force implicit tradeoff rates. But lexicographic preferences (where life always outranks money, period) are provably complete, transitive, and money-pump invulnerable on infinite choice sets. This is precisely the mathematical structure of a "sacred value," and it is perfectly rational. The hidden assumption is finiteness — which Harry never states.
 
-[`HpmorFormalized/DecisionTheory/ExistentialRisk.lean`](HpmorFormalized/DecisionTheory/ExistentialRisk.lean) extends the project into the much less cheerful territory where utility calculations interact with existential stakes.
+[Full writeup](HpmorFormalized/DecisionTheory/TabooTradeoffs.md)
 
-This is still an active frontier, but it is no longer accurate to describe the area as merely notional.
+### Confirmation bias is sometimes Bayesian-optimal
 
-## Flagship Result: Timeless Decision Theory
+**The claim:** Positive testing (trying to confirm your hypothesis rather than disconfirm it) is irrational (Ch. 8).
 
-The most significant finding in the project so far concerns Timeless Decision Theory (TDT), the decision-theoretic framework that Yudkowsky developed and that Harry uses throughout HPMOR. TDT was published as a [MIRI working paper](https://intelligence.org/files/TDT.pdf) in 2010 but has never appeared in a peer-reviewed journal. The LessWrong community has debated TDT vs CDT vs EDT informally for over 15 years without resolution.
+**What we proved:** In the specific 2-4-6 task Harry discusses, he's right — positive tests have a likelihood ratio of exactly 1 (completely uninformative). But [`no_universal_test_dominance`](HpmorFormalized/Bayes/ConfirmationBias.lean) proves this is not a universal law. Under priors concentrated on narrow hypotheses, positive testing yields *higher* likelihood ratios than negative testing. Whether "confirmation bias" is irrational depends on your prior over the hypothesis space, which Harry never specifies.
 
-We settled a chunk of it with machine-checked proofs.
+[Full writeup](HpmorFormalized/Bayes/ConfirmationBias.md)
 
-**What we proved** ([`HpmorFormalized/DecisionTheory/TDT.lean`](HpmorFormalized/DecisionTheory/TDT.lean)):
+### Reputation makes dominance games twice as fragile
 
-1. **In Newcomb's Problem, TDT = EDT.** The expected utility functions are *literally identical* — same formula, different vocabulary. (`tdt_equals_edt_in_newcomb`)
+**The claim:** Slytherin's dominance contests are dysfunctional (Ch. 19).
 
-2. **In the Smoking Lesion Problem, TDT ≠ EDT.** TDT recommends smoking (the gene is already determined), EDT recommends not smoking (smoking is evidence of cancer). Opposite recommendations, both machine-checked. (`opposite_recommendations_smoking_lesion`)
+**What we proved:** Mapping Draco's world onto a Hawk-Dove game with reputation effects, the mixed equilibrium (where some people fight and some back down) breaks at a threshold of `R* = (C-V)/2` — *half* the naive expectation. The factor of 2 arises because reputation helps Hawks in both matchups, making the system doubly fragile. Even small social rewards for dominance collapse the mixed equilibrium into universal aggression. Slytherin isn't just culturally dysfunctional — it's mathematically guaranteed to be.
 
-3. **Logical counterfactuals are provably underdetermined.** Multiple consistent "logical counterfactual" functions exist that satisfy TDT's stated constraints but give different answers. TDT cannot make unique predictions without additional axioms. (`logical_counterfactual_underdetermined`)
+[Full writeup](HpmorFormalized/GameTheory/HawkDove.md)
 
-**What this means:**
+---
 
-TDT is a genuine intermediate theory — it agrees with EDT where EDT is right (Newcomb) and with CDT where CDT is right (Smoking Lesion). It is not redundant. But it requires knowing the *causal structure* of the problem upfront: is the action-state correlation algorithmic (Newcomb-like) or common-cause (Smoking Lesion-like)? This causal-structure input is a hidden assumption that HPMOR never makes explicit.
+## What Else Is Here
 
-Harry gets the right answers throughout the book. But the framework he thinks he is using is not a new theory — it is a *synthesis* of existing theories that requires empirical judgment about which type of correlation you are facing. The real contribution is the observation, not the formalism.
+Beyond the greatest hits, the project includes machine-checked results on:
 
-We initially proved TDT collapses into EDT (finding #14 v1). Then we tested the one case where it might not — and it didn't. Then we corrected the finding. This is the methodology working as designed: state a prediction, formalize, update when you're wrong.
+- **Time travel**: Novikov self-consistency for finite state spaces, causal DAG consistency (forests only — [finding #6](ROADMAP.md)), and a proof that time-travel-as-NP-oracle [fails because "do nothing" is always a valid fixed point](HpmorFormalized/TimeTravel/NPOracle.md)
+- **Bayesian updating**: Posterior convergence, the planning fallacy's circularity ([the outside view requires knowing what you're estimating](HpmorFormalized/Bayes/PlanningFallacy.md)), scope insensitivity as bounded-rational optimality
+- **Game theory**: Aumann's agreement theorem (common priors are required — Harry and Draco don't share them), iterated PD cooperation thresholds (independent of the sucker payoff), Mirror of Erised as a preference-alignment mechanism
+- **Signaling**: Dumbledore's ambiguity is optimal when opponents are more dangerous than allies are helpful — but targeted signaling dominates both clarity and ambiguity
+- **Information security**: The Interdict of Merlin only works because magic enforces it; mundane containment degrades exponentially with population
+- **Occlumency**: Perfect mind-shielding requires either impossible information-theoretic security or computational hardness assumptions HPMOR never states
 
-The full set of findings (14 so far) is tracked in [ROADMAP.md](ROADMAP.md).
+The full findings table (21 entries, each with novelty assessment) is in [ROADMAP.md](ROADMAP.md).
 
-## Why This Exists
+---
 
-Because HPMOR is full of claims that invite escalation.
+## Limitations
 
-Not "that sounds clever."
+Some things this project is not:
 
-Not "I agree with the vibe."
+- **Not a complete formalization of HPMOR.** We picked claims that seemed like they should be formalizable and might teach us something. Many HPMOR arguments are too informal or too literary to formalize meaningfully. We left those alone.
+- **Not a refutation of HPMOR.** Most of Harry's conclusions hold up. The findings are about hidden assumptions, missing qualifications, and cases where the right answer came from the wrong framework. The book is smarter than most fiction. It is also occasionally wrong in ways that are more interesting than being right.
+- **Not fully general.** Some models are toy-sized. Some findings are sensitive to modeling choices. Each finding's writeup includes an honest novelty assessment (genuinely novel, borderline, known result, or modeling artifact). We don't pretend a 3-element counterexample is the same as a deep structural theorem.
+- **Not peer-reviewed.** The proofs are machine-checked (0 `sorry`s), but the *models* — whether the Lean definitions faithfully capture the HPMOR claims — are judgment calls. Read the docstrings. Disagree if you see a better model.
 
-Not even "this would make a good LessWrong comment thread."
-
-The interesting question is whether the ideas can survive formalization. Can the informal arguments be made explicit? Can the hidden assumptions be exposed? Can the dramatic speeches be translated into definitions, lemmas, and theorems?
-
-That is what this repo is for.
+---
 
 ## Build
 
-Requires [elan](https://github.com/leanprover/elan), which installs Lean and `lake`.
+Requires [elan](https://github.com/leanprover/elan) (installs Lean and `lake`).
 
 ```bash
 git clone https://github.com/ngundotra/hpmor-formalized.git
@@ -110,46 +107,31 @@ lake exe cache get
 lake build
 ```
 
-If all goes well, Lean will verify the current state of the project with considerably less enthusiasm than Harry would display while explaining why this is obviously the correct use of his time.
+Lean will verify the project with considerably less enthusiasm than the protagonist would display while explaining why this is obviously the correct use of his time.
 
-## Aristotle (Autoformalization)
+## Autoformalization (Aristotle)
 
-This project integrates with [Harmonic's Aristotle](https://aristotle.harmonic.fun) for automated proof generation. Aristotle can take a natural language proof goal and produce verified Lean 4 code against our Mathlib version.
-
-### Setup
-
-1. Get an API key at [aristotle.harmonic.fun/dashboard/keys](https://aristotle.harmonic.fun/dashboard/keys)
-2. Add to your shell config: `export ARISTOTLE_API_KEY=<your-key>`
-
-### Usage
+The project integrates with [Harmonic's Aristotle](https://aristotle.harmonic.fun) for automated proof generation.
 
 ```bash
+# Setup: get an API key at aristotle.harmonic.fun/dashboard/keys
+export ARISTOTLE_API_KEY=<your-key>
+
 # Submit a proof goal
 uv run aristotle submit "Prove that the posterior L*e/(L*e+(1-e)) tends to 1 as L tends to infinity" --project-dir .
 
-# Check status
+# Check status / download results
 uv run aristotle list --limit 5
-
-# Download results (returns a tarball)
 uv run aristotle result <project-id> --destination /tmp/result.tar.gz
-
-# Extract and inspect
-mkdir -p /tmp/result && tar xzf /tmp/result.tar.gz -C /tmp/result
-cat /tmp/result/.tar_aristotle/ARISTOTLE_SUMMARY_*.md
 ```
 
-### Claude Code integration
+If using [Claude Code](https://claude.com/claude-code), an Aristotle agent and `/aristotle` skill are available in `.claude/`.
 
-If using [Claude Code](https://claude.com/claude-code), an Aristotle agent and `/aristotle` skill are available in `.claude/`. Agents can submit proofs, poll for results, and integrate generated code automatically.
+**Honest note:** Every substantive proof in this project was written by LLM-assisted manual formalization, not Aristotle. The bottleneck is modeling decisions (choosing the right definitions), not proof search. Aristotle may be more useful for filling `sorry`s in well-structured files than for novel formalizations from scratch. See [ROADMAP.md](ROADMAP.md) for details.
 
 ## Contributing
 
-Contributions are welcome, especially if you enjoy any of the following:
-
-- raising the tier of an existing formalization
-- formalizing a new HPMOR claim
-- turning vague rationalist gestures into explicit mathematics
-- stress-testing HPMOR claims and reporting what formalization reveals
+If you enjoy the experience of taking a confident informal argument and discovering exactly which unstated assumption it was leaning on, you will like it here.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_CRITERIA.md).
 
@@ -159,3 +141,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and [ACCEPTANCE_CRITERIA.md](ACCEPTANCE_C
 - [Mathlib4 docs](https://leanprover-community.github.io/mathlib4_docs/)
 - [Lean 4 documentation](https://lean-lang.org/lean4/doc/)
 - [Aristotle autoformalization](https://aristotle.harmonic.fun)
+- [Full claims extraction (160+ formalizable claims)](HPMOR_CLAIMS.md)
