@@ -124,8 +124,30 @@ targets remaining.
 
 | Tool | Claims attempted | Result |
 |------|-----------------|--------|
-| Aristotle (Harmonic) | Infinitely many primes, Bayes proofs, Aumann, IteratedPD, FinalExam, ExistentialRisk | Success on simple proofs; queue delays on complex ones; manual writing often faster |
-| Manual + LLM assist | All modules | Primary method for most proofs |
+| Aristotle (Harmonic) | ~20 submissions across all modules | Completed 1 simple proof (infinitely many primes). All substantive proofs were written manually by LLM agents while Aristotle sat in queue. |
+| Manual + LLM assist (Claude subagents) | All 16 findings, all modules | Primary method for every proof in the project. Faster than Aristotle for everything we tried. |
+
+**Honest assessment of Aristotle:** We built a full integration (agent file,
+`/aristotle` skill, documentation) and submitted ~20 jobs during this session.
+The tool works for simple, well-known results (e.g., infinitely many primes
+compiled correctly). But for the novel formalizations that make this project
+interesting, Aristotle was not useful:
+
+- **Queue delays:** Submitting multiple jobs caused a backlog. Most jobs sat
+  in QUEUED status for 15-30+ minutes without processing. Several never
+  completed.
+- **Subagents were faster:** Every substantive proof — TDT, Hawk-Dove,
+  taboo tradeoffs, confirmation bias, all of them — was written manually
+  by Claude subagents while Aristotle's queue hadn't moved.
+- **The bottleneck is modeling, not proving:** The hard part of this project
+  is choosing the right definitions and structures. Once the model is right,
+  the proofs are usually straightforward (field_simp, linarith, aesop). Aristotle
+  can prove theorems but can't make modeling decisions.
+
+Aristotle may be more useful for filling `sorry`s in existing well-structured
+files than for generating novel formalizations from scratch. For this project's
+goals (high-uncertainty claims where the interesting question is whether the
+model works at all), LLM-assisted manual formalization was strictly better.
 
 See [README.md](README.md) for Aristotle setup instructions.
 
