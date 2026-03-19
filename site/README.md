@@ -22,3 +22,6 @@ then sync the JSON if the site should reflect the change.
 
 This site is designed to be deployed from the `site/` subdirectory via a GitHub
 Pages workflow, without forcing the repository into a `docs/` layout.
+
+The deployed artifact is intentionally small and static so GitHub Pages can serve
+it without any extra build tooling.
