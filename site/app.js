@@ -48,12 +48,12 @@ const jargonDefs = {
 
 // Map featured finding titles to their hidden assumptions.
 const axiomBreaks = {
-  "Confirmation bias is not always irrational — it depends on what you already believe":
-    "The irrationality of confirmation bias depends on what hypotheses you thought were plausible — it is not a universal law.",
-  "Time travel does not give you a supercomputer — the universe can always choose the boring loop":
-    "Self-consistency does not select the useful fixed point; the trivial 'nothing happens' loop is always available.",
-  "The standard way to compare catastrophic outcomes breaks when everything might kill everyone":
-    "Expected utility assumes outcomes can be summed and compared on a single scale — even when one outcome is negative infinity.",
+  "The best strategy isn't honesty or secrecy — it's telling the right people the right things":
+    "Hidden assumption: everyone listening is on your side. Once you name it, you see the tipping point — when opponents can hurt you more than allies can help you, transparency backfires. The proof is simple algebra. The assumption was the finding.",
+  "Having deal-breakers is not irrational":
+    "Hidden assumption: you have a finite set of options. Once you name it, refusing tradeoffs becomes perfectly rational on richer choice sets. The proof is straightforward. The assumption was the finding.",
+  "Locking yourself into a plan only helps in specific situations":
+    "Hidden assumption: there's exactly one equilibrium to escape. Once you name it, locking in with multiple equilibria can trap you in a worse outcome. The proof follows quickly. The assumption was the finding.",
 };
 
 document.querySelector("#source-note").textContent =
@@ -62,6 +62,7 @@ document.querySelector("#sync-note").textContent = data.meta.syncPolicy;
 
 renderFeaturedFindings(data.meta.featuredFindings);
 renderCaseFiles(data.caseFiles);
+renderAppendix(data.appendix);
 renderLedger(data.hiddenAssumptions);
 
 // After all rendering, hydrate jargon tooltips across the page.
@@ -237,6 +238,32 @@ function renderCaseFiles(caseFiles) {
       card.classList.toggle("expanded");
     });
   });
+}
+
+function renderAppendix(entries) {
+  const container = document.querySelector("#appendix-list");
+  if (!container || !entries) return;
+  container.innerHTML = entries
+    .map(
+      (entry) => {
+        const id = `appendix-${slugify(entry.title)}`;
+        const moduleLink = entry.modulePath
+          ? `<a class="proof-link" href="${escapeHtml(githubBlob(entry.modulePath, 1))}" target="_blank" rel="noreferrer">Module</a>`
+          : "";
+        return `
+        <article class="appendix-card" id="${id}">
+          <h3>${escapeHtml(entry.title)} ${anchorButton(id)}</h3>
+          <p>${escapeHtml(entry.summary)}</p>
+          <div class="axiom-callout axiom-callout-compact">
+            <span class="axiom-label">Hidden assumption</span>
+            <span class="axiom-value">${escapeHtml(entry.hiddenAssumption)}</span>
+          </div>
+          ${moduleLink ? `<div class="link-list" style="margin-top:0.5rem">${moduleLink}</div>` : ""}
+        </article>
+      `;
+      }
+    )
+    .join("");
 }
 
 function renderLedger(entries) {

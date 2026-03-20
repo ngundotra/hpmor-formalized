@@ -65,8 +65,8 @@ body::before {
 
 .hero {
   overflow: hidden;
-  padding: 3rem;
-  min-height: 20rem;
+  padding: 2.5rem 3rem 2rem;
+  min-height: auto;
 }
 
 .hero::after {
@@ -122,8 +122,10 @@ h3 {
 
 .lede {
   max-width: 42rem;
-  margin: 1.25rem 0 0;
-  font-size: 1.05rem;
+  margin: 1rem 0 0;
+  font-size: 1rem;
+  color: var(--muted);
+  opacity: 0.85;
 }
 
 .lede .subtle-link {
@@ -132,17 +134,7 @@ h3 {
   text-underline-offset: 3px;
 }
 
-/* ─── "Why should you care?" line ─── */
-
-.why-care {
-  max-width: 38rem;
-  margin: 1.5rem 0 0;
-  font-family: var(--headline);
-  font-size: 1.15rem;
-  line-height: 1.55;
-  color: var(--ink);
-  font-style: italic;
-}
+/* (why-care paragraph removed — content moved to explainer card) */
 
 /* ─── Hook prompt (scroll cue) ─── */
 
@@ -150,8 +142,8 @@ h3 {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-top: 2rem;
-  padding: 1rem 1.25rem;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.25rem;
   border-radius: 16px;
   background: var(--accent-soft);
   border: 1px solid rgba(155, 44, 44, 0.18);
@@ -171,27 +163,7 @@ h3 {
   50% { transform: translateY(5px); }
 }
 
-/* ─── Opener section ─── */
-
-.opener-section {
-  margin-top: 1.5rem;
-  border-left: 4px solid var(--accent);
-}
-
-.opener-card {
-  display: grid;
-  gap: 1rem;
-}
-
-.opener-summary {
-  font-size: 1.08rem;
-  line-height: 1.75;
-  max-width: 56rem;
-}
-
-.opener-punchline {
-  margin-top: 0.5rem;
-}
+/* (opener section removed — confirmation bias covered in worked example + featured findings) */
 
 /* ─── Axiom callouts ─── */
 
@@ -941,6 +913,40 @@ a {
   font-size: 0.9rem;
 }
 
+/* ─── Appendix ─── */
+
+.appendix-grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.appendix-card {
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 16px 16px 0;
+  background: rgba(255, 253, 249, 0.88);
+  padding: 1.1rem 1.3rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.appendix-card h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.appendix-card p {
+  margin: 0;
+  font-size: 0.93rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.appendix-card .axiom-callout-compact {
+  background: rgba(180, 125, 24, 0.08);
+  border-color: rgba(180, 125, 24, 0.15);
+}
+
 /* ─── Go Deeper collapsible section ─── */
 
 .go-deeper-section {
@@ -1062,6 +1068,7 @@ a {
 
 .featured-card:hover .anchor-link,
 .case-card:hover .anchor-link,
+.appendix-card:hover .anchor-link,
 .anchor-link:focus {
   opacity: 0.6;
 }
