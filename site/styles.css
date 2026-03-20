@@ -51,6 +51,8 @@ body::before {
   padding: 2rem 0 4rem;
 }
 
+/* ─── Hero ─── */
+
 .hero,
 .section {
   position: relative;
@@ -98,12 +100,12 @@ h3 {
 
 h1 {
   font-size: clamp(2.5rem, 5vw, 4.9rem);
-  max-width: 16ch;
+  max-width: 18ch;
 }
 
 h2 {
   font-size: clamp(1.65rem, 3vw, 2.5rem);
-  max-width: 18ch;
+  max-width: 22ch;
 }
 
 h3 {
@@ -123,6 +125,151 @@ h3 {
   margin: 1.25rem 0 0;
   font-size: 1.05rem;
 }
+
+.lede .subtle-link {
+  color: var(--accent);
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+
+/* ─── "Why should you care?" line ─── */
+
+.why-care {
+  max-width: 38rem;
+  margin: 1.5rem 0 0;
+  font-family: var(--headline);
+  font-size: 1.15rem;
+  line-height: 1.55;
+  color: var(--ink);
+  font-style: italic;
+}
+
+/* ─── Hook prompt (scroll cue) ─── */
+
+.hook-prompt {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(155, 44, 44, 0.18);
+  font-family: var(--headline);
+  font-size: 1.15rem;
+  color: var(--accent);
+  max-width: fit-content;
+}
+
+.hook-arrow {
+  font-size: 1.4rem;
+  animation: bounce 2s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+/* ─── Opener section ─── */
+
+.opener-section {
+  margin-top: 1.5rem;
+  border-left: 4px solid var(--accent);
+}
+
+.opener-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.opener-summary {
+  font-size: 1.08rem;
+  line-height: 1.75;
+  max-width: 56rem;
+}
+
+.opener-punchline {
+  margin-top: 0.5rem;
+}
+
+/* ─── Axiom callouts ─── */
+
+.axiom-callout {
+  display: grid;
+  gap: 0.3rem;
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(155, 44, 44, 0.15);
+  margin: 0;
+}
+
+.axiom-label {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.axiom-value {
+  color: var(--ink);
+  line-height: 1.6;
+  font-size: 0.98rem;
+}
+
+.inline-axiom-hint {
+  display: inline;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-family: var(--mono);
+}
+
+/* ─── Explainer grid ─── */
+
+.explainer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.explainer-card {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255, 253, 249, 0.92);
+  padding: 1.4rem;
+}
+
+.explainer-card h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.15rem;
+}
+
+.explainer-card p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* ─── Pattern intro ─── */
+
+.pattern-intro {
+  max-width: 50rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.02rem;
+}
+
+.section-intro {
+  max-width: 50rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.98rem;
+}
+
+/* ─── Common layout ─── */
 
 .hero-meta {
   display: flex;
@@ -158,6 +305,8 @@ h3 {
   margin-bottom: 1.4rem;
 }
 
+/* ─── Grids ─── */
+
 .dashboard-grid,
 .case-grid,
 .featured-grid,
@@ -171,6 +320,7 @@ h3 {
 
 .dashboard-grid {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-top: 1rem;
 }
 
 .featured-grid {
@@ -200,6 +350,8 @@ h3 {
 .summary-chip {
   background: rgba(31, 27, 22, 0.06);
 }
+
+/* ─── Cards ─── */
 
 .stat-card,
 .featured-card,
@@ -236,6 +388,11 @@ h3 {
 .featured-card {
   display: grid;
   gap: 1rem;
+}
+
+/* Featured card axiom callout */
+.featured-card .axiom-callout {
+  margin-top: 0.25rem;
 }
 
 .thesis-card,
@@ -282,9 +439,62 @@ h3 {
   overflow-x: auto;
 }
 
+/* ─── Case cards: collapsible ─── */
+
 .case-card {
   display: grid;
+  gap: 0;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.case-card:hover {
+  border-color: rgba(155, 44, 44, 0.3);
+  box-shadow: 0 8px 30px rgba(38, 24, 8, 0.1);
+}
+
+.case-card-summary {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.case-card-details {
+  display: grid;
   gap: 1rem;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding-top 0.35s ease;
+  padding-top: 0;
+}
+
+.case-card.expanded .case-card-details {
+  max-height: 2000px;
+  padding-top: 1rem;
+}
+
+.case-card-expand {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.case-card-expand .expand-icon {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+
+.case-card.expanded .case-card-expand .expand-icon {
+  transform: rotate(180deg);
 }
 
 .card-top {
@@ -296,7 +506,7 @@ h3 {
 }
 
 .card-top h3 {
-  max-width: 16ch;
+  max-width: 20ch;
 }
 
 .badge-solid {
@@ -347,6 +557,8 @@ h3 {
   line-height: 1.65;
 }
 
+/* ─── Ledger ─── */
+
 .ledger-list {
   display: grid;
   gap: 0.85rem;
@@ -360,6 +572,8 @@ h3 {
   margin-bottom: 0.3rem;
   font-size: 1.1rem;
 }
+
+/* ─── Tables ─── */
 
 .attack-grid {
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -422,6 +636,8 @@ h3 {
   color: var(--accent);
   background: rgba(155, 44, 44, 0.05);
 }
+
+/* ─── Provenance ─── */
 
 .provenance {
   display: grid;
@@ -493,6 +709,8 @@ h3 {
   color: var(--muted);
 }
 
+/* ─── Code viewer ─── */
+
 .viewer {
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -541,6 +759,348 @@ a {
   color: var(--accent);
 }
 
+/* ─── CTA Section ─── */
+
+.cta-section {
+  background: linear-gradient(135deg, rgba(255, 252, 246, 0.95), rgba(155, 44, 44, 0.04));
+}
+
+.cta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.cta-card {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255, 253, 249, 0.92);
+  padding: 1.4rem;
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.cta-card h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.cta-card p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.cta-card code {
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  background: rgba(31, 27, 22, 0.06);
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+}
+
+.cta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.cta-link:hover {
+  text-decoration: underline;
+}
+
+/* ─── Why-software line in explainer card ─── */
+
+.why-software-line {
+  margin-top: 0.75rem !important;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+  font-style: italic;
+  color: var(--ink) !important;
+  font-size: 0.92rem !important;
+}
+
+/* ─── Author note ─── */
+
+.author-note {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 16px;
+  background: rgba(31, 27, 22, 0.03);
+  border: 1px dashed var(--line);
+}
+
+.author-note p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.65;
+  font-style: italic;
+}
+
+.author-note a {
+  color: var(--accent);
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* ─── Claim quote styling ─── */
+
+.claim-quote {
+  font-family: var(--headline);
+  font-style: italic;
+  font-size: 1.02rem;
+  color: var(--ink);
+  border-left: 3px solid var(--gold);
+  padding-left: 0.85rem;
+  margin: 0;
+}
+
+/* ─── Worked example ─── */
+
+.worked-example-steps {
+  display: grid;
+  gap: 0;
+}
+
+.we-step {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 1rem;
+  padding: 1.2rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.we-step:last-child {
+  border-bottom: none;
+}
+
+.we-step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.we-step-content h4 {
+  margin: 0 0 0.4rem;
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  font-family: var(--mono);
+}
+
+.we-step-content p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.we-lean-snippet {
+  margin: 0;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(31, 27, 22, 0.04);
+  border: 1px solid var(--line);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  font-family: var(--mono);
+  overflow-x: auto;
+}
+
+.we-lean-explain {
+  margin-top: 0.6rem !important;
+  font-size: 0.9rem !important;
+  color: var(--muted);
+}
+
+/* ─── Compact axiom callout on case cards ─── */
+
+.axiom-callout-compact {
+  padding: 0.75rem 1rem;
+}
+
+.axiom-callout-compact .axiom-value {
+  font-size: 0.9rem;
+}
+
+/* ─── Go Deeper collapsible section ─── */
+
+.go-deeper-section {
+  padding: 0;
+}
+
+.go-deeper-toggle {
+  width: 100%;
+}
+
+.go-deeper-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.go-deeper-summary::-webkit-details-marker {
+  display: none;
+}
+
+.go-deeper-arrow {
+  font-size: 1.2rem;
+  color: var(--accent);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.go-deeper-toggle[open] .go-deeper-arrow {
+  transform: rotate(180deg);
+}
+
+.go-deeper-content {
+  padding: 0 2rem 2rem;
+  display: grid;
+  gap: 2rem;
+}
+
+.go-deeper-block h3 {
+  font-family: var(--headline);
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+/* ─── Case grid: compact layout ─── */
+
+.case-grid {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* ─── Jargon tooltips ─── */
+
+.jargon {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+  cursor: help;
+  position: relative;
+}
+
+.jargon:hover::after,
+.jargon:focus::after {
+  content: attr(data-definition);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--body);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  padding: 0.6rem 0.85rem;
+  border-radius: 10px;
+  max-width: 280px;
+  min-width: 180px;
+  width: max-content;
+  z-index: 100;
+  pointer-events: none;
+  white-space: normal;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  text-decoration: none;
+  font-style: normal;
+  font-weight: normal;
+}
+
+.jargon:hover::before,
+.jargon:focus::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--ink);
+  z-index: 101;
+  pointer-events: none;
+}
+
+/* ─── Anchor links ─── */
+
+.anchor-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  margin-left: 0.35rem;
+  vertical-align: middle;
+}
+
+.featured-card:hover .anchor-link,
+.case-card:hover .anchor-link,
+.anchor-link:focus {
+  opacity: 0.6;
+}
+
+.anchor-link:hover {
+  opacity: 1 !important;
+  color: var(--accent);
+}
+
+/* ─── Show more button ─── */
+
+.show-more-btn {
+  display: block;
+  margin: 1.25rem auto 0;
+  padding: 0.75rem 1.6rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: rgba(155, 44, 44, 0.06);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.show-more-btn:hover {
+  background: rgba(155, 44, 44, 0.12);
+  box-shadow: 0 4px 16px rgba(155, 44, 44, 0.1);
+}
+
+/* ─── Hidden case cards ─── */
+
+.case-card-hidden {
+  display: none;
+}
+
+/* ─── Animations ─── */
+
 @keyframes reveal {
   from {
     opacity: 0;
@@ -551,6 +1111,8 @@ a {
     transform: translateY(0);
   }
 }
+
+/* ─── Responsive ─── */
 
 @media (max-width: 720px) {
   .page-shell {
@@ -575,5 +1137,23 @@ a {
 
   h1 {
     max-width: none;
+  }
+
+  .explainer-grid,
+  .cta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .go-deeper-summary {
+    padding: 1.4rem;
+  }
+
+  .go-deeper-content {
+    padding: 0 1.4rem 1.4rem;
+  }
+
+  .we-step {
+    grid-template-columns: 2rem 1fr;
+    gap: 0.75rem;
   }
 }

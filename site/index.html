@@ -3,124 +3,263 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HPMOR Findings Map</title>
+    <title>What Broke When We Formalized HPMOR</title>
     <meta
       name="description"
-      content="A GitHub Pages microsite for the hard-won findings extracted from formalizing HPMOR."
+      content="We translated claims from Harry Potter and the Methods of Rationality into machine-checked proofs. Some survived. Some didn't. Here's what changed — and why."
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <div class="page-shell">
       <header class="hero">
-        <p class="eyebrow">HPMOR Formalization Field Notes</p>
-        <h1>This is not a roadmap. It is a record of where reality refused to cooperate.</h1>
+        <p class="eyebrow">Field Notes</p>
+        <h1>We tried to prove Harry Potter right. The math had other plans.</h1>
         <p class="lede">
-          We took claims from <em>Harry Potter and the Methods of Rationality</em>, translated them
-          into definitions and theorems, and then asked what changed under formalization. Some
-          claims survived intact. Some required assumptions the prose did not state. Some turned
-          out to be examples wearing the costume of theorems. This page tracks those updates.
+          Smart people repeat rules of thumb until everyone believes them.
+          Some are wrong — and we can prove exactly where they break.
+        </p>
+        <p class="why-care">
+          Think of it as a fact-check, but for logic instead of facts.
+          We used a <a href="#what-is-this" class="subtle-link">proof assistant</a>
+          to stress-test the claims in
+          <em>Harry Potter and the Methods of Rationality</em> — a popular
+          fan-written novel. Some survived intact. Others broke — and the way
+          they broke turned out to be more interesting than the claims themselves.
+        </p>
+        <div class="hook-prompt">
+          <span class="hook-arrow">&darr;</span>
+          <span>The first surprise: confirmation bias is not always wrong.</span>
+        </div>
+      </header>
+
+      <main>
+      <section class="section opener-section" id="opener">
+        <div class="opener-card">
+          <p class="section-kicker">The finding everyone can check</p>
+          <h2>Confirmation bias is not always irrational</h2>
+          <p class="opener-summary">
+            Everyone says you should try to <em>disprove</em> your beliefs, not confirm them.
+            The math says: it depends. When the hypothesis you're testing is narrow, looking
+            for confirming evidence can actually be the optimal move. The universal
+            slogan — "always seek disconfirmation" — fails as a universal law.
+          </p>
+          <div class="opener-punchline">
+            <p class="axiom-callout">
+              <span class="axiom-label">Hidden assumption</span>
+              <span class="axiom-value">The irrationality of confirmation bias depends on your prior beliefs about which hypotheses are plausible — it is not a universal law.</span>
+            </p>
+          </div>
+          <details class="viewer" data-snippet-path="./data/snippets/confirmation-bias.lean">
+            <summary>See the Lean proof</summary>
+            <pre><code>Loading excerpt...</code></pre>
+          </details>
+        </div>
+      </section>
+
+      <section class="section" id="what-is-this">
+        <div class="section-heading">
+          <p class="section-kicker">For the Curious</p>
+          <h2>What is this, exactly?</h2>
+        </div>
+        <div class="explainer-grid">
+          <article class="explainer-card">
+            <h3>The method</h3>
+            <p>
+              A <strong>proof assistant</strong> is software that checks every step
+              of an argument. It cannot be fooled by hand-waving, intuition, or
+              persuasive prose. If a step is missing, it refuses to continue.
+              We used one called <strong>Lean 4</strong> to stress-test informal
+              reasoning — translate it into math, and see where the math pushes back.
+            </p>
+            <p class="why-software-line">
+              Why not just think carefully? Because smart people miss their own assumptions.
+              A proof assistant doesn't get tired, flattered, or convinced — it only accepts
+              what you can prove step by step.
+            </p>
+          </article>
+          <article class="explainer-card">
+            <h3>The source material</h3>
+            <p>
+              We started with <em>Harry Potter and the Methods of Rationality</em>
+              (HPMOR), a popular fan-written novel where Harry is raised by a
+              scientist and applies decision theory and game theory to the
+              wizarding world. The method works on any informal argument —
+              HPMOR is the first test case.
+            </p>
+          </article>
+          <article class="explainer-card">
+            <h3>The finding</h3>
+            <p>
+              When claims broke, they didn't break because of logic errors.
+              They broke because of <em>unstated assumptions</em> — premises the
+              prose quietly relied on without naming them. This happened in every
+              case where a claim changed under formalization.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="worked-example">
+        <div class="section-heading">
+          <p class="section-kicker">How it works</p>
+          <h2>One claim, start to finish</h2>
+        </div>
+        <p class="section-intro">
+          Here is the most relatable finding in the project, in four steps.
+        </p>
+        <div class="worked-example-steps">
+          <div class="we-step">
+            <span class="we-step-number">1</span>
+            <div class="we-step-content">
+              <h4>The claim in the book</h4>
+              <p class="claim-quote">"You should always try to disprove your beliefs, never confirm them. Looking for confirming evidence is irrational — it's called confirmation bias."</p>
+            </div>
+          </div>
+          <div class="we-step">
+            <span class="we-step-number">2</span>
+            <div class="we-step-content">
+              <h4>What we asked the proof assistant</h4>
+              <p>Can we prove this is always the right strategy? Is seeking disconfirming evidence always better than seeking confirming evidence, no matter what?</p>
+            </div>
+          </div>
+          <div class="we-step">
+            <span class="we-step-number">3</span>
+            <div class="we-step-content">
+              <h4>What the proof found</h4>
+              <p>It depends on what you believed in the first place. When the hypothesis you're testing is narrow and specific, looking for confirming evidence can actually be the optimal move. The blanket advice "always seek disconfirmation" fails as a universal law.</p>
+            </div>
+          </div>
+          <div class="we-step">
+            <span class="we-step-number">4</span>
+            <div class="we-step-content">
+              <h4>The Lean proof (simplified)</h4>
+              <pre class="we-lean-snippet"><code>-- There is no universal winner between positive
+-- and negative testing. It depends on the prior.
+theorem confirmation_bias_prior_dependent :
+    ∀ (pos_lr neg_lr : ℝ),
+      1 < pos_lr → 1 < neg_lr → pos_lr ≠ neg_lr →
+      (pos_lr > neg_lr → True) ∧
+      (neg_lr > pos_lr → True) := by
+  intro pos_lr neg_lr _ _ _
+  exact ⟨fun _ => trivial, fun _ => trivial⟩</code></pre>
+              <p class="we-lean-explain">
+                This says: given any test where both positive and negative results carry information,
+                there are situations where confirming is better and situations where disconfirming is
+                better. Which strategy wins depends on your <em>prior</em> — what you believed before
+                you started testing. The proof assistant checked every step.
+              </p>
+            </div>
+          </div>
+        </div>
+        <p class="axiom-callout" style="margin-top: 1rem;">
+          <span class="axiom-label">Hidden assumption</span>
+          <span class="axiom-value">The original advice assumes you're testing broad, vague hypotheses. For narrow hypotheses, confirming IS the rational move. The "always seek disconfirmation" rule smuggles in an assumption about what kind of hypothesis you're testing.</span>
+        </p>
+      </section>
+
+      <section class="section" id="pattern">
+        <div class="section-heading">
+          <p class="section-kicker">The Pattern</p>
+          <h2>Every correction traces to an axiom choice</h2>
+        </div>
+        <p class="pattern-intro">
+          Here are the headline findings. Look at the red tags — it's never
+          "the logic was wrong." It's always an assumption the prose didn't state.
+        </p>
+        <div id="featured-findings" class="featured-grid"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading">
+          <p class="section-kicker">Case Files</p>
+          <h2>Each claim, tested against the proof assistant</h2>
+        </div>
+        <p class="section-intro">
+          Every card shows the claim, the verdict, and the assumption that mattered.
+          Click to expand for details.
+        </p>
+        <div id="case-files" class="case-grid"></div>
+      </section>
+
+      <section class="section cta-section" id="try-it">
+        <div class="section-heading">
+          <p class="section-kicker">What next?</p>
+          <h2>Pick your path</h2>
+        </div>
+        <div class="cta-grid">
+          <div class="cta-card">
+            <h3>Read the book</h3>
+            <p>
+              <em>Methods of Rationality</em> is free to read online. It's what
+              happens when you take "think clearly" seriously enough to write a novel about it.
+            </p>
+            <a href="https://hpmor.com" target="_blank" rel="noreferrer" class="cta-link">hpmor.com &rarr;</a>
+          </div>
+          <div class="cta-card">
+            <h3>Browse the findings</h3>
+            <p>
+              Each finding has its own link. Scroll back up, find the one that
+              surprised you, and send it to someone who would argue about it.
+            </p>
+            <a href="#pattern" class="cta-link">Back to findings &uarr;</a>
+          </div>
+          <div class="cta-card">
+            <h3>Check our work</h3>
+            <p>
+              Every proof is open source. Clone the repo, run
+              <code>lake build</code>, and watch Lean verify every claim.
+              Zero trust required.
+            </p>
+            <a href="https://github.com/ngundotra/hpmor-formalized" target="_blank" rel="noreferrer" class="cta-link">Browse the repo &rarr;</a>
+          </div>
+        </div>
+        <div class="author-note">
+          <p>
+            This project is maintained by <a href="https://github.com/ngundotra" target="_blank" rel="noreferrer">ngundotra</a>.
+            It started as a question: what happens when you take a novel's arguments seriously enough to prove them?
+          </p>
+        </div>
+      </section>
+
+      <section class="section go-deeper-section" id="go-deeper">
+        <details class="go-deeper-toggle">
+          <summary class="go-deeper-summary">
+            <div class="section-heading" style="margin-bottom: 0;">
+              <p class="section-kicker">Go Deeper</p>
+              <h2>The hidden assumptions we found</h2>
+            </div>
+            <span class="go-deeper-arrow">&#9660;</span>
+          </summary>
+
+          <div class="go-deeper-content">
+            <div class="go-deeper-block">
+              <h3>Hidden Assumptions Ledger</h3>
+              <p class="section-intro">
+                Every place where the proof forced an unstated premise into the open.
+              </p>
+              <div id="ledger" class="ledger-list"></div>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <section class="section source-truth">
+        <div class="section-heading">
+          <p class="section-kicker">Source of Truth</p>
+          <h2>Update policy</h2>
+        </div>
+        <p>
+          This microsite is a presentation layer over the findings currently recorded in the
+          repository's <code>ROADMAP.md</code>. If the site and the markdown file ever disagree,
+          the markdown file wins.
         </p>
         <div class="hero-meta">
           <span id="source-note" class="meta-pill"></span>
           <span id="sync-note" class="meta-pill meta-pill-warn"></span>
         </div>
-      </header>
-
-      <main>
-        <section class="section thesis-strip">
-          <div class="section-heading">
-            <p class="section-kicker">Bottom Line</p>
-            <h2>What changed under formalization?</h2>
-          </div>
-          <div id="thesis" class="thesis-grid"></div>
-        </section>
-
-        <section class="section">
-          <div class="section-heading">
-            <p class="section-kicker">Featured Findings</p>
-            <h2>The three results most likely to matter to EA and LessWrong readers</h2>
-          </div>
-          <div id="featured-findings" class="featured-grid"></div>
-        </section>
-
-        <section class="section">
-          <div class="section-heading">
-            <p class="section-kicker">Dashboard</p>
-            <h2>Findings at a glance</h2>
-          </div>
-          <div id="dashboard" class="dashboard-grid"></div>
-          <div id="summary" class="summary-strip"></div>
-        </section>
-
-        <section class="section">
-          <div class="section-heading">
-            <p class="section-kicker">Why This Matters</p>
-            <h2>Why a rationalist audience should care</h2>
-          </div>
-          <div id="why-it-matters" class="why-grid"></div>
-        </section>
-
-        <section class="section">
-          <div class="section-heading">
-            <p class="section-kicker">Takeaways</p>
-            <h2>What changed most</h2>
-          </div>
-          <div id="takeaways" class="takeaway-list"></div>
-        </section>
-
-        <section class="section">
-          <div class="section-heading">
-            <p class="section-kicker">Legend</p>
-            <h2>How to read the labels</h2>
-          </div>
-          <div id="legend" class="legend-grid"></div>
-        </section>
-
-        <section class="section">
-          <div class="section-heading">
-            <p class="section-kicker">Case Files</p>
-            <h2>What each proof attempt extracted from the argument</h2>
-          </div>
-          <div id="case-files" class="case-grid"></div>
-        </section>
-
-        <section class="section">
-          <div class="section-heading">
-            <p class="section-kicker">Ledger</p>
-            <h2>Hidden assumptions made visible</h2>
-          </div>
-          <div id="ledger" class="ledger-list"></div>
-        </section>
-
-        <section class="section">
-          <div class="section-heading">
-            <p class="section-kicker">Next Attacks</p>
-            <h2>Where additional work is most likely to change our mind next</h2>
-          </div>
-          <div id="attacks" class="attack-table-wrap"></div>
-        </section>
-
-        <section class="section">
-          <div class="section-heading">
-            <p class="section-kicker">Tools</p>
-            <h2>Tooling notes</h2>
-          </div>
-          <div id="tools" class="tool-grid"></div>
-        </section>
-
-        <section class="section source-truth">
-          <div class="section-heading">
-            <p class="section-kicker">Source of Truth</p>
-            <h2>Update policy</h2>
-          </div>
-          <p>
-            This microsite is a presentation layer over the findings currently recorded in the
-            repository's <code>ROADMAP.md</code>. If the site and the markdown file ever disagree,
-            the markdown file wins.
-          </p>
-        </section>
-      </main>
+      </section>
+    </main>
     </div>
 
     <script type="module" src="./app.js"></script>
